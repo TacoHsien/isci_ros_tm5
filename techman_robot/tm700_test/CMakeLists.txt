@@ -4,7 +4,7 @@ project(tm700_test)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS  
+find_package(catkin REQUIRED COMPONENTS
   roscpp
   moveit_msgs
   moveit_ros_manipulation
@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 #  message_generation
   tm_description
   tm_msgs
+  tm_kinematics
 )
 
 ## System dependencies are found with CMake's conventions
