@@ -32,6 +32,7 @@
 #include <moveit_msgs/CollisionObject.h>
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -55,78 +56,62 @@
 #include "PCDProcessClass.h"
 #include "VotingSchemePoseEstimation_Class.h"
 
+
+/*
+ * Functions declaration
+ */
+
+void Manual_RecognitionFun();
+void cloud_cb(const sensor_msgs::PointCloud2Ptr& input);
+bool try_move_to_named_target(moveit::planning_interface::MoveGroup& group,
+                              moveit::planning_interface::MoveGroup::Plan& plan,
+                              const std::string& target_name,
+                              unsigned int max_try_times);
+bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
+                              moveit::planning_interface::MoveGroup::Plan& plan,
+                              const std::vector<double>& joint_target,
+                              unsigned int max_try_times);
+
+
+/*
+ *   Global Variables
+ */
+
+	int show_Mode = 0;
+	int CADModel_Number = 3;
+	float CADModel_Normal_radius = 7.5;
+	float CADModel_Voxel_radius = 5.0;//(1 = 1mm)
+	float Scene_Voxel_radius = 6.0;
+	float Scene_Normal_radius = 7.5;
+	float SACSegmentationFromNormal_radius = 12;
+	float HashMapSearch_Position = 20.0; // No use
+	float HashMapSearch_Rotation = 15.0;
+	float Clustter_Position = 3.5;
+	float Cluster_Rotation = 30.0;
+	float SamplingRate = 20;
+	int showPose_num = 0;
+	int DivideObject_ClusterNumber = 0;
+	pcl::PointXYZ Arm_PickPoint;
+	float ObjectPose_EulerAngle[3];
+	bool _IsPoseEstimationDone = true;
+	std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > DivideObject_ClusterPCDResult;
+	char *AllCADModel_pcdFileName[3] = { "VirtualObject_1_CADModel_PCD.pcd", "VirtualObject_3_CADModel_PCD.pcd", "VirtualObject_6_CADModel_PCD.pcd"};
+	char *CADModel_pcdFileName[1] = { "VirtualObject_1_CADModel_PCD.pcd"};
+	int Grasp_ObjectType;
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> RecognitionPCD_Viewer (new pcl::visualization::PCLVisualizer ("RecognitionPCD_Viewer"));
+	float segmentation_Range[3][2] =
+	{
+		{120, 385},
+		{270, 440},
+		{100, 800}
+	};
+
+
+
 ros::Publisher pub;
 //Set data path
 std::string pcd_data_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/pcd/";
 std::string pcd_save_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/src/data/";
-
-void cloud_cb(const sensor_msgs::PointCloud2Ptr& input)
-{
-  //Create a container for the data.
-  sensor_msgs::PointCloud2 output;
-
-  //Do data processing here
-  output = *input;
-
-  //Publish the data.
-  ROS_INFO("Publish output");
-  pub.publish(output);
-}
-
-bool try_move_to_named_target(moveit::planning_interface::MoveGroup& group,
-                              moveit::planning_interface::MoveGroup::Plan& plan,
-                              const std::string& target_name,
-                              unsigned int max_try_times = 1
-                             )
-{
-    if (!ros::ok()) return false;
-    bool success = false;
-
-    for (unsigned int i = 0; i < max_try_times; i++)
-    {
-
-        group.setNamedTarget(target_name);
-
-        if (group.move())
-        {
-            success = true;
-            break;
-        }
-        else
-        {
-            if (!ros::ok()) break;
-            sleep(1);
-        }
-    }
-    return success;
-}
-
-bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
-                              moveit::planning_interface::MoveGroup::Plan& plan,
-                              const std::vector<double>& joint_target,
-                              unsigned int max_try_times = 1
-                             )
-{
-    if (!ros::ok()) return false;
-    bool success = false;
-
-    for (unsigned int i = 0; i < max_try_times; i++)
-    {
-
-        group.setJointValueTarget(joint_target);
-
-        if (group.move())
-        {
-            success = true;
-            break;
-        }
-        else
-        {
-            if (!ros::ok()) break;
-            sleep(1);
-        }
-    }
-}
 
 int main(int argc, char **argv)
 {
@@ -253,4 +238,99 @@ int main(int argc, char **argv)
     }
 */
     return 0;
+}
+
+void cloud_cb(const sensor_msgs::PointCloud2Ptr& input)
+{
+  //Create a container for the data.
+  sensor_msgs::PointCloud2 output;
+
+  //Do data processing here
+  output = *input;
+
+  //Publish the data.
+  ROS_INFO("Publish output");
+  pub.publish(output);
+}
+
+bool try_move_to_named_target(moveit::planning_interface::MoveGroup& group,
+                              moveit::planning_interface::MoveGroup::Plan& plan,
+                              const std::string& target_name,
+                              unsigned int max_try_times = 1
+                             )
+{
+    if (!ros::ok()) return false;
+    bool success = false;
+
+    for (unsigned int i = 0; i < max_try_times; i++)
+    {
+
+        group.setNamedTarget(target_name);
+
+        if (group.move())
+        {
+            success = true;
+            break;
+        }
+        else
+        {
+            if (!ros::ok()) break;
+            sleep(1);
+        }
+    }
+    return success;
+}
+
+bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
+                              moveit::planning_interface::MoveGroup::Plan& plan,
+                              const std::vector<double>& joint_target,
+                              unsigned int max_try_times = 1
+                             )
+{
+    if (!ros::ok()) return false;
+    bool success = false;
+
+    for (unsigned int i = 0; i < max_try_times; i++)
+    {
+
+        group.setJointValueTarget(joint_target);
+
+        if (group.move())
+        {
+            success = true;
+            break;
+        }
+        else
+        {
+            if (!ros::ok()) break;
+            sleep(1);
+        }
+    }
+}
+
+
+void Manual_RecognitionFun()
+{
+	float background_color[3] = { 0, 0, 0 };
+	float point_color[3] = { 255, 255, 255 };
+	float reference_point_color[3] = { 255, 0, 0 };
+	int CAD_Type = 1;
+
+	/*
+	 *   此區域建立資料庫
+	 */
+	//compute_VotingEstimation_OffinePhase( CADModel_Number, CADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
+
+
+	/*
+	 *   此區域擷取影像與辨識
+	 */
+
+	//KinectObj.SceneToPCDProcessing();
+	yml2pcd( "Scene.yml", "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, 1);
+	//delete [] KinectObj.Scene_ymlName;
+	voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
+	compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 0);
+	compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
+
 }

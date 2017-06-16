@@ -20,6 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
   tm_description
   tm_msgs
   tm_kinematics
+  pcl_conversions
+  pcl_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -155,13 +157,18 @@ include_directories(include
  add_executable(tm700_test
    src/tm700_test.cpp
  )
-
+ add_executable(tm700_realsense
+   src/tm700_realsense.cpp
+ )
 ## Add cmake target dependencies of the executable
 ## same as for the library above
  add_dependencies(tm700_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(tm700_test
+   ${catkin_LIBRARIES}
+ )
+ target_link_libraries(tm700_realsense
    ${catkin_LIBRARIES}
  )
 
