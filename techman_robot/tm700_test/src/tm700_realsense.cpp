@@ -317,18 +317,20 @@ void Manual_RecognitionFun()
 	int CAD_Type = 1;
 
 	/*
-	 *   此區域建立資料庫
+   *   Offline Phase
+   *   Build up the database
 	 */
 	//compute_VotingEstimation_OffinePhase( CADModel_Number, CADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
 
 
 	/*
-	 *   此區域擷取影像與辨識
+   *   Image Capturing and Recongizing
 	 */
 
 	//KinectObj.SceneToPCDProcessing();
-	yml2pcd( "Scene.yml", "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, 1);
+	//yml2pcd( "Scene.yml", "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, 1);
 	//delete [] KinectObj.Scene_ymlName;
+
 	voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
 	compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 0);
 	compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
