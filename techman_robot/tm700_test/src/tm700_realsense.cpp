@@ -53,15 +53,15 @@
 //Bin Picking related Libraries
 #include "CADDatabaseClass.h"
 #include "PCD_Function.h"
-#include "PCDProcessClass.h"
-#include "VotingSchemePoseEstimation_Class.h"
+//#include "PCDProcessClass.h"
+//#include "VotingSchemePoseEstimation_Class.h"
 
 
 /*
  * Functions declaration
  */
 
-void Manual_RecognitionFun();
+void Manual_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input);
 void cloud_cb(const sensor_msgs::PointCloud2Ptr& input);
 bool try_move_to_named_target(moveit::planning_interface::MoveGroup& group,
                               moveit::planning_interface::MoveGroup::Plan& plan,
@@ -71,6 +71,14 @@ bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
                               moveit::planning_interface::MoveGroup::Plan& plan,
                               const std::vector<double>& joint_target,
                               unsigned int max_try_times);
+
+/*
+*   Object
+*/
+//WgSocket MySocket;
+//VotingSchemePoseEstimationClass PoseEstimationObj;
+//CADDatabaseClass CADDatabaseObj;
+//KinectClass KinectObj;
 
 
 /*
@@ -98,7 +106,7 @@ bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
 	char *AllCADModel_pcdFileName[3] = { "VirtualObject_1_CADModel_PCD.pcd", "VirtualObject_3_CADModel_PCD.pcd", "VirtualObject_6_CADModel_PCD.pcd"};
 	char *CADModel_pcdFileName[1] = { "VirtualObject_1_CADModel_PCD.pcd"};
 	int Grasp_ObjectType;
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> RecognitionPCD_Viewer (new pcl::visualization::PCLVisualizer ("RecognitionPCD_Viewer"));
+	//boost::shared_ptr<pcl::visualization::PCLVisualizer> RecognitionPCD_Viewer (new pcl::visualization::PCLVisualizer ("RecognitionPCD_Viewer"));
 	float segmentation_Range[3][2] =
 	{
 		{120, 385},
@@ -123,19 +131,19 @@ int main(int argc, char **argv)
 
     //Create a ROS subscriber for the input point cloud
     ROS_INFO("Subscribe /camera/depth/points");
-    ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, cloud_cb);
+    ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, Manual_RecognitionFun);
 
     //Create ROS publishe
-    ros::Publisher pcl_pub = node_handle_file.advertise<sensor_msgs::PointCloud2>("pcl_output", 10);
+    //ros::Publisher pcl_pub = node_handle_file.advertise<sensor_msgs::PointCloud2>("pcl_output", 10);
 
     //Load PCD file
-    pcl::io::loadPCDFile(pcd_data_path + "CADObject_0_theta_0_phi_0.pcd", cloud);
-    pcl::io::savePCDFileASCII("test.pcd", cloud);
-    pcl::toROSMsg(cloud, pcd_data);
-    pcd_data.header.frame_id = "point_cloud";
+    //pcl::io::loadPCDFile(pcd_data_path + "CADObject_0_theta_0_phi_0.pcd", cloud);
+    //pcl::io::savePCDFileASCII("test.pcd", cloud);
+    //pcl::toROSMsg(cloud, pcd_data);
+    //pcd_data.header.frame_id = "point_cloud";
 
     //Create a ROS publisher for the output point cloud
-    pub = node_handle.advertise<sensor_msgs::PointCloud2>("output", 10);
+    //pub = node_handle.advertise<sensor_msgs::PointCloud2>("output", 10);
 /*
     ros::ServiceClient set_io_client = node_handle.serviceClient<tm_msgs::SetIO>("tm_driver/set_io");
     tm_msgs::SetIO io_srv;
@@ -309,12 +317,21 @@ bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
 }
 
 
-void Manual_RecognitionFun()
+void Manual_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 {
 	float background_color[3] = { 0, 0, 0 };
 	float point_color[3] = { 255, 255, 255 };
 	float reference_point_color[3] = { 255, 0, 0 };
 	int CAD_Type = 1;
+
+  pcl::PointCloud<pcl::PointXYZ>::Ptr scene (new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr scene_downsampling (new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr scene_segmentation (new pcl::PointCloud<pcl::PointXYZ>);
+
+  sensor_msgs::PointCloud2 output_downsampling;
+  sensor_msgs::PointCloud2 output_segmentation;
+
+  pcl::fromROSMsg(*input, *scene);
 
 	/*
    *   Offline Phase
@@ -331,8 +348,16 @@ void Manual_RecognitionFun()
 	//yml2pcd( "Scene.yml", "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, 1);
 	//delete [] KinectObj.Scene_ymlName;
 
-	voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
-	compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 0);
-	compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
+	//voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
+  voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
+  pcl::toROSMsg(*scene_downsampling, output_downsampling);
+  pub.publish(output_downsampling);
 
+	//compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 0);
+  compute_SACSegmentationFromNormals( scene_downsampling, scene_segmentation, SACSegmentationFromNormal_radius, 0);
+  pcl::toROSMsg(*scene_segmentation, output_segmentation);
+  pub.publish(output_segmentation);
+
+  //compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
+  //compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, scene, scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
 }

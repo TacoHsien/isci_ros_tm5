@@ -158,7 +158,7 @@ include_directories(include
    src/tm700_test.cpp
  )
  add_executable(tm700_realsense
-   src/tm700_realsense.cpp
+   src/tm700_realsense.cpp src/CADDatabaseClass.cpp src/PCD_Function.cpp src/PCDProcessClass.cpp src/VotingSchemePoseEstimation.cpp
  )
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -169,7 +169,7 @@ include_directories(include
    ${catkin_LIBRARIES}
  )
  target_link_libraries(tm700_realsense
-   ${catkin_LIBRARIES}
+   ${catkin_LIBRARIES} libvtkCommon.so libvtkFiltering.so
  )
 
 #############
