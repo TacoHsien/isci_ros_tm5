@@ -350,13 +350,15 @@ void Manual_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 
 	//voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
   voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
+  ROS_INFO("voxelGrid_Filter finished");
   pcl::toROSMsg(*scene_downsampling, output_downsampling);
+  ROS_INFO("Publish topic");
   pub.publish(output_downsampling);
 
 	//compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 0);
-  compute_SACSegmentationFromNormals( scene_downsampling, scene_segmentation, SACSegmentationFromNormal_radius, 0);
-  pcl::toROSMsg(*scene_segmentation, output_segmentation);
-  pub.publish(output_segmentation);
+  //compute_SACSegmentationFromNormals( scene_downsampling, scene_segmentation, SACSegmentationFromNormal_radius, 0);
+  //pcl::toROSMsg(*scene_segmentation, output_segmentation);
+  //pub.publish(output_segmentation);
 
   //compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
   //compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, scene, scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());

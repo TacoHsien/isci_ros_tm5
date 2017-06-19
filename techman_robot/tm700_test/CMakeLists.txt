@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
   tm_kinematics
   pcl_conversions
   pcl_ros
+  pcl_msgs
 )
 
 ## System dependencies are found with CMake's conventions
