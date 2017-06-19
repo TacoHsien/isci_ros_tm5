@@ -89,7 +89,7 @@ bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
 	int CADModel_Number = 3;
 	float CADModel_Normal_radius = 7.5;
 	float CADModel_Voxel_radius = 5.0;//(1 = 1mm)
-	float Scene_Voxel_radius = 6.0;
+	float Scene_Voxel_radius = 0.01; //6.0;
 	float Scene_Normal_radius = 7.5;
 	float SACSegmentationFromNormal_radius = 12;
 	float HashMapSearch_Position = 20.0; // No use
@@ -129,12 +129,14 @@ int main(int argc, char **argv)
     sensor_msgs::PointCloud2 pcd_data;
     pcl::PointCloud<pcl::PointXYZ> cloud;
 
+    //ros::Publisher pcl_pub = nh.advertise<sensor.msgs::PointCloud2>("pcl_output", 10);
+
     //Create a ROS subscriber for the input point cloud
     ROS_INFO("Subscribe /camera/depth/points");
     ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, Manual_RecognitionFun);
 
     //Create ROS publishe
-    //ros::Publisher pcl_pub = node_handle_file.advertise<sensor_msgs::PointCloud2>("pcl_output", 10);
+    pub = node_handle_file.advertise<sensor_msgs::PointCloud2>("pcl_output", 10);
 
     //Load PCD file
     //pcl::io::loadPCDFile(pcd_data_path + "CADObject_0_theta_0_phi_0.pcd", cloud);
@@ -250,7 +252,7 @@ int main(int argc, char **argv)
 
 void cloud_cb(const sensor_msgs::PointCloud2Ptr& input)
 {
-  //Create a container for the data.
+  //Create a containimpl_er for the data.
   sensor_msgs::PointCloud2 output;
 
   //Do data processing here
