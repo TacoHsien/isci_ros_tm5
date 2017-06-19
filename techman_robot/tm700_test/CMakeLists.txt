@@ -144,10 +144,26 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
+##Set SOURCE of HEADER FILES
+#set(SOURCES src/CADDatabaseClass.cpp src/PCD_Function.cpp src/PCDProcessClass.cpp src/VotingSchemePoseEstimation.cpp)
+
+##Set HEADER FILES
+set(HEADER_FILES 
+    include/CADDatabaseClass.h 
+    include/PCD_Function.h 
+    include/PCDProcessClass.h 
+    include/VotingSchemePoseEstimation_Class.h
+)
+
 ## Declare a C++ library
 # add_library(tm700
 #   src/${PROJECT_NAME}/tm700.cpp
 # )
+
+#add_library(CADDatabaseClass src/CADDatabaseClass.cpp)
+#add_library(PCD_Function src/PCD_Function.cpp)
+#add_library(PCDProcessClass src/PCDProcessClass.cpp)
+#add_library(VotingSchemePoseEstimation_Class src/VotingSchemePoseEstimation_Class.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -159,7 +175,12 @@ include_directories(include
    src/tm700_test.cpp
  )
  add_executable(tm700_realsense
-   src/tm700_realsense.cpp src/CADDatabaseClass.cpp src/PCD_Function.cpp src/PCDProcessClass.cpp src/VotingSchemePoseEstimation.cpp
+   src/tm700_realsense.cpp 
+   src/CADDatabaseClass.cpp 
+   src/PCD_Function.cpp 
+   src/PCDProcessClass.cpp 
+   src/VotingSchemePoseEstimation.cpp
+   ${HEADER_FILES}
  )
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -170,7 +191,9 @@ include_directories(include
    ${catkin_LIBRARIES}
  )
  target_link_libraries(tm700_realsense
-   ${catkin_LIBRARIES} libvtkCommon.so libvtkFiltering.so
+   ${catkin_LIBRARIES} 
+   libvtkCommon.so 
+   libvtkFiltering.so
  )
 
 #############

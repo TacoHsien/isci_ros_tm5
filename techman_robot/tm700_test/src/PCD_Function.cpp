@@ -14,7 +14,7 @@
 #include <pcl/features/cvfh.h>
 #include <pcl/registration/transformation_estimation_svd.h>
 #include <flann/flann.h>
-
+using namespace std;
 /*
 void DisplyXYZPCDbyXYZRGB(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const float *point_color, const float *background_color, int show_mode)
 {
@@ -103,7 +103,7 @@ void DisplyPCDNormalbyXYZRGB(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud,pc
 }
 */
 
-/*
+
 // if radius = 0.03 ， 0.03 is 3cm
 void ComputeNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::Normal>::Ptr &output_normalCloud, float neighbor_radius)
 {
@@ -120,7 +120,7 @@ void ComputeNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::Point
 
 	// output_normalCloud->points.size () should have the same size as the input input_cloud->points.size ()*
 }
-*/
+
 
 
 
@@ -434,7 +434,7 @@ void selectReferencePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl
 }
 */
 
-/*
+
 void compute_PPFNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointNormal>::Ptr &output_normalCloud, float neighbor_radius)
 {
 	cout << "ComputeNormals : Create a NormalsEstimation.\n";
@@ -452,7 +452,7 @@ void compute_PPFNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::P
 
 	// output_normalCloud->points.size () should have the same size as the input input_cloud->points.size ()*
 }
-*/
+
 
 /*
 void estiblish_CADModelPointCloud( char *OriginalCADModel_Name, char *SaveCADModel_Name, float radius, float voxelGrid_Value, int is_Boundary, int show_mode)
@@ -531,13 +531,13 @@ void computePPF_TrainingModel(char *CADModel_Name, char *CADModel_HashMapName, f
 }
 */
 
-/*
-vector<pcl::PointCloud<pcl::PointNormal>::Ptr > cloud_models_with_normals;
-vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > cloud_models;
-vector<pcl::PPFHashMapSearch::Ptr> hashmap_search_vector;
-*/
 
-/*
+vector<pcl::PointCloud<pcl::PointNormal>::Ptr> cloud_models_with_normals;
+vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloud_models;
+vector<pcl::PPFHashMapSearch::Ptr> hashmap_search_vector;
+
+
+
 void compute_VotingEstimation_OffinePhase(int CADModel_Number, char **CADModel_FileName, float radius, float HashMapSearch_Position, float HashMapSearch_Rotation)
 {
 	cout << "compute_VotingEstimation_OffinePhase : Reading CADModel PointCloud...\n";
@@ -579,9 +579,9 @@ void compute_VotingEstimation_OffinePhase(int CADModel_Number, char **CADModel_F
 
 
 }
-*/
 
-/*
+
+
 void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, float radius, int show_Mode)
 {
 
@@ -619,9 +619,9 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 
 	cout << "compute_SACSegmentationFromNormals : Done!!!\n";
 }
-*/
 
-/*
+
+
 void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet)
 {
 
@@ -742,7 +742,7 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 		viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, 0, 0, 255, ss_3.str ());
 		viewer.setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_3.str ());*/
 
-/*COMMENT BY TACO
+
 		for ( int k = 0; k < 3; k++ )
 		{
 			stringstream ss_ICP;
@@ -807,16 +807,16 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 		viewer->addPointCloud (determine_GraspICP_Cloud.at(WhichOneBeGrasp), ss_ICP.str ());
 		viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
 		viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[0][0], point_color[0][1], point_color[0][2], ss_ICP.str ());*/
-	//COMMENT BY TACO}
+	}
 
-/*COMMENT BY TACO
+
 	viewer->spinOnce (10);
 	boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
 }
-COMMENT BY TACO*/
 
-/*
+
+
 void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], bool &_IsPoseEstimationDone, int CAD_Type, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognized_CADModel)
 {
 	recognized_CADModel->clear();
@@ -871,7 +871,7 @@ void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl
 		for (size_t i = 0; i < cloud_output_subsampled.points.size (); ++i)
 			cloud_output_subsampled_xyz->points.push_back ( pcl::PointXYZ (cloud_output_subsampled.points[i].x, cloud_output_subsampled.points[i].y, cloud_output_subsampled.points[i].z));*/
 
-/*COMMENT BY TACO
+
 		cout << "compute_VotingEstimation_OnlinePhase : Showing model...\n";
 		Eigen::Matrix4f mat_1 = ppf_registration.getFinalTransformation();
 		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix();
@@ -986,7 +986,7 @@ void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl
 		viewer->spinOnce (10);
 	// }
 
-}COMMENT BY TACO*/
+}
 
 /*
 void computeIterativeClosestPoint( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &Target_cloud, Eigen::Matrix4f &result_transformation)
