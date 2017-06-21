@@ -1,4 +1,4 @@
-﻿#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
+﻿//#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
 #include "PCD_Function.h"
 #include <pcl/features/principal_curvatures.h>
 #include <pcl/registration/icp.h>
@@ -405,7 +405,7 @@ void ComputeBoundary(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::Poin
 	cout << "ComputeBoundary : Done.\n";
 }
 
-/*
+
 void selectReferencePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, std::vector<int> &referencePoint_indices)
 {
 	cout <<  "selectReferencePoints : Create a random_sample filter.\n";
@@ -432,7 +432,7 @@ void selectReferencePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl
 	cout << "selectReferencePoints : Done.\n";
 
 }
-*/
+
 
 
 void compute_PPFNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointNormal>::Ptr &output_normalCloud, float neighbor_radius)
@@ -454,7 +454,7 @@ void compute_PPFNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::P
 }
 
 
-/*
+
 void estiblish_CADModelPointCloud( char *OriginalCADModel_Name, char *SaveCADModel_Name, float radius, float voxelGrid_Value, int is_Boundary, int show_mode)
 {
 	cout << "estiblish_CADModelPointCloud : Creating temp data....\n";
@@ -497,9 +497,9 @@ void estiblish_CADModelPointCloud( char *OriginalCADModel_Name, char *SaveCADMod
 		cout << "estiblish_CADModelPointCloud : Done!!!\n";
 	}
 }
-*/
 
-/*
+
+
 void computePPF_TrainingModel(char *CADModel_Name, char *CADModel_HashMapName, float radius)
 {
 	cout << "computePPF_TrainingModel : Loding CADModel Data to PointCloud ...\n";
@@ -529,7 +529,7 @@ void computePPF_TrainingModel(char *CADModel_Name, char *CADModel_HashMapName, f
 	}
 	cout << "computePPF_TrainingModel : Done!!\n";
 }
-*/
+
 
 
 vector<pcl::PointCloud<pcl::PointNormal>::Ptr> cloud_models_with_normals;
@@ -622,13 +622,13 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 
 
 
-void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet)
+void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer,*/ pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet)
 {
 
 	cout << "compute_VotingEstimation_OnlinePhase : Reading the segmentation PointCloud Scene\n";
-	viewer->removeAllPointClouds();
-    viewer->addPointCloud (cloud_scene);
-	viewer->spinOnce (10);
+	//viewer->removeAllPointClouds();
+  //viewer->addPointCloud (cloud_scene);
+	//viewer->spinOnce (10);
 
 
 	cout << "compute_VotingEstimation_OnlinePhase : Computing scene normal.\n";
@@ -669,14 +669,14 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 		//做投票跟Cluster
 		ppf_registration.align (cloud_output_subsampled);
 
-		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_output_subsampled_xyz (new pcl::PointCloud<pcl::PointXYZ> ());//沒用到
-		for (size_t i = 0; i < cloud_output_subsampled.points.size (); ++i)//沒用到
-			cloud_output_subsampled_xyz->points.push_back ( pcl::PointXYZ (cloud_output_subsampled.points[i].x, cloud_output_subsampled.points[i].y, cloud_output_subsampled.points[i].z));//沒用到
+		//pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_output_subsampled_xyz (new pcl::PointCloud<pcl::PointXYZ> ());//沒用到
+		//for (size_t i = 0; i < cloud_output_subsampled.points.size (); ++i)//沒用到
+		//	cloud_output_subsampled_xyz->points.push_back ( pcl::PointXYZ (cloud_output_subsampled.points[i].x, cloud_output_subsampled.points[i].y, cloud_output_subsampled.points[i].z));//沒用到
 
 		cout << "compute_VotingEstimation_OnlinePhase : Showing model...\n";
-		Eigen::Matrix4f mat_1 = ppf_registration.results.at(0).pose.matrix();
-		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix();
-		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix();
+		Eigen::Matrix4f mat_1 = ppf_registration.results.at(0).pose.matrix(); //results.at(0).pose.matrix();
+		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix(); //results.at(1).pose.matrix();
+		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix(); //results.at(2).pose.matrix();
 		Eigen::Affine3f final_transformation_1 (mat_1);
 		Eigen::Affine3f final_transformation_2 (mat_2);
 		Eigen::Affine3f final_transformation_3 (mat_3);
@@ -751,9 +751,9 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 				if ( Outlier_Score.at(i * 3 + k)  < 0.15 )
 				{
 					ss_ICP << "Model_ " << i << "ICP_Voting_" << k;
-					viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
-					viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
-					viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
+					//viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
+					//viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
+					//viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 0 );
@@ -765,9 +765,9 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 				if ( Outlier_Score.at(i * 3 + k)  < 0.30 ) //0.35
 				{
 					ss_ICP << "Model_ " << i << "ICP_Voting_" << k;
-					viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
-					viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
-					viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
+					//viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
+					//viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
+					//viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 1 );
@@ -779,9 +779,9 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 				if ( Outlier_Score.at(i * 3 + k)  < 0.20 )
 				{
 					ss_ICP << "Model_ " << i << "ICP_Voting_" << k;
-					viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
-					viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
-					viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
+					//viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
+					//viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
+					//viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 2 );
@@ -810,13 +810,13 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 	}
 
 
-	viewer->spinOnce (10);
+	//viewer->spinOnce (10);
 	boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
 }
 
 
-
+/*COMMENT BY TACO
 void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], bool &_IsPoseEstimationDone, int CAD_Type, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognized_CADModel)
 {
 	recognized_CADModel->clear();
@@ -871,11 +871,11 @@ void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl
 		for (size_t i = 0; i < cloud_output_subsampled.points.size (); ++i)
 			cloud_output_subsampled_xyz->points.push_back ( pcl::PointXYZ (cloud_output_subsampled.points[i].x, cloud_output_subsampled.points[i].y, cloud_output_subsampled.points[i].z));*/
 
-
+/*COMMENT BY TACO
 		cout << "compute_VotingEstimation_OnlinePhase : Showing model...\n";
 		Eigen::Matrix4f mat_1 = ppf_registration.getFinalTransformation();
-		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix();
-		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix();
+		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix(); //results.at(1).pose.matrix();
+		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix(); //results.at(2).pose.matrix();
 		Eigen::Affine3f final_transformation_1 (mat_1);
 		Eigen::Affine3f final_transformation_2 (mat_2);
 		Eigen::Affine3f final_transformation_3 (mat_3);
@@ -987,7 +987,7 @@ void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl
 	// }
 
 }
-
+COMMENT BY TACO*/
 /*
 void computeIterativeClosestPoint( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &Target_cloud, Eigen::Matrix4f &result_transformation)
 {
