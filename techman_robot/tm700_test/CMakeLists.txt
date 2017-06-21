@@ -21,13 +21,14 @@ find_package(catkin REQUIRED COMPONENTS
   tm_msgs
   tm_kinematics
   pcl_conversions
-  pcl_ros
+#  pcl_ros
   pcl_msgs
 )
 
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(PCL 1.7 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -142,7 +143,14 @@ catkin_package(
 # include_directories(include)
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
+
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+if(NOT PCL_FOUND)
+  MESSAGE(FATAL_ERROR "PCL not found.\n")
+endif (NOT PCL_FOUND)
 
 ##Set SOURCE of HEADER FILES
 #set(SOURCES src/CADDatabaseClass.cpp src/PCD_Function.cpp src/PCDProcessClass.cpp src/VotingSchemePoseEstimation.cpp)
@@ -192,6 +200,7 @@ set(HEADER_FILES
  )
  target_link_libraries(tm700_realsense
    ${catkin_LIBRARIES} 
+   ${PCL_LIBRARIES}
    libvtkCommon.so 
    libvtkFiltering.so
  )
