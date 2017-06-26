@@ -20,15 +20,34 @@ find_package(catkin REQUIRED COMPONENTS
   tm_description
   tm_msgs
   tm_kinematics
-  pcl_conversions
-#  pcl_ros
+#  std_msgs
+  camera_info_manager
+#  cv_bridge
+  image_transport  
   pcl_msgs
+#  pcl_conversions
+#  pcl_ros
 )
 
+set(PCL_DIR "/usr/local/share/pcl-1.7/")
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+
+#OpenCV
+find_package(OpenCV REQUIRED)
+IF (OPENCV_FOUND)
+  MESSAGE("-- Found OpenCV version ${OPENCV_VERSION}: ${OPENCV_INCLUDE_DIRS}")
+ENDIF (OPENCV_FOUND)
+
+#PCL
 find_package(PCL 1.7 REQUIRED)
+#IF(NOT PCL_FOUND)
+  #MESSAGE(FATAL_ERROR "PCL not found.\n")
+#ENDIF(NOT PCL_FOUND)
+IF(PCL_FOUND)
+  MESSAGE("-- Found PCL version ${PCL_VERSION}: ${PCL_INCLUDE_DIRS}")   
+ENDIF(PCL_FOUND)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -141,26 +160,33 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(include
-  ${catkin_INCLUDE_DIRS}
+include_directories(#include
+  ${catkin_INCLUDE_DIRS}  
+  ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/include
 )
 
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
-if(NOT PCL_FOUND)
-  MESSAGE(FATAL_ERROR "PCL not found.\n")
-endif (NOT PCL_FOUND)
+link_directories(
+  ${OpenCV_LIBRARY_DIRS}
+  ${PCL_LIBRARY_DIRS}
+)
+
+add_definitions(
+  ${OpenCV_DEFINITIONS}
+  ${PCL_DEFINITIONS}
+)
+
 
 ##Set SOURCE of HEADER FILES
 #set(SOURCES src/CADDatabaseClass.cpp src/PCD_Function.cpp src/PCDProcessClass.cpp src/VotingSchemePoseEstimation.cpp)
 
 ##Set HEADER FILES
 set(HEADER_FILES 
-    include/CADDatabaseClass.h 
-    include/PCD_Function.h 
-    include/PCDProcessClass.h 
-    include/VotingSchemePoseEstimation_Class.h
+    ./include/CADDatabaseClass.h 
+    ./include/PCD_Function.h 
+    ./include/PCDProcessClass.h 
+    ./include/VotingSchemePoseEstimation_Class.h
 )
 
 ## Declare a C++ library
@@ -168,7 +194,14 @@ set(HEADER_FILES
 #   src/${PROJECT_NAME}/tm700.cpp
 # )
 
-#add_library(CADDatabaseClass src/CADDatabaseClass.cpp)
+add_library(bin_picking #SHARED
+   src/CADDatabaseClass.cpp 
+   src/PCD_Function.cpp 
+   src/PCDProcessClass.cpp 
+   src/VotingSchemePoseEstimation.cpp
+   ${HEADER_FILES}
+)
+
 #add_library(PCD_Function src/PCD_Function.cpp)
 #add_library(PCDProcessClass src/PCDProcessClass.cpp)
 #add_library(VotingSchemePoseEstimation_Class src/VotingSchemePoseEstimation_Class.cpp)
@@ -193,6 +226,7 @@ set(HEADER_FILES
 ## Add cmake target dependencies of the executable
 ## same as for the library above
  add_dependencies(tm700_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(tm700_realsense ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(tm700_test
@@ -200,7 +234,9 @@ set(HEADER_FILES
  )
  target_link_libraries(tm700_realsense
    ${catkin_LIBRARIES} 
+   ${OpenCV_LIBS}
    ${PCL_LIBRARIES}
+   bin_picking
    libvtkCommon.so 
    libvtkFiltering.so
  )
