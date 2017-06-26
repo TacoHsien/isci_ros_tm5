@@ -51,10 +51,10 @@
 #include <pcl/io/pcd_io.h>
 
 //Bin Picking related Libraries
-#include "CADDatabaseClass.h"
-#include "PCD_Function.h"
-//#include "PCDProcessClass.h"
-#include "VotingSchemePoseEstimation_Class.h"
+#include <CADDatabaseClass.h>
+#include <PCD_Function.h>
+#include <PCDProcessClass.h>
+#include <VotingSchemePoseEstimation_Class.h>
 
 using namespace std;
 
@@ -352,7 +352,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 				//delete [] KinectObj.Scene_ymlName;
 
 				//voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
-        voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
+        /*voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
         pcl::toROSMsg(*scene_downsampling, output_downsampling);
 
 				//compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 1);
@@ -367,11 +367,12 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 		 *   pose estimating
 		 */
     //compute_VotingEstimation_OnlinePhase( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
-		compute_VotingEstimation_OnlinePhase(/*RecognitionPCD_Viewer,*/ scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
+		compute_VotingEstimation_OnlinePhase(RecognitionPCD_Viewer, scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
 		cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
 		cin >> CaptureImage_Again;
 	}
 }
+
 
 void Manual_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 {
