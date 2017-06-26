@@ -1,5 +1,5 @@
-﻿//#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
-#include "PCD_Function.h"
+﻿#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
+#include <PCD_Function.h>
 #include <pcl/features/principal_curvatures.h>
 #include <pcl/registration/icp.h>
 #include <pcl/registration/icp_nl.h>
@@ -14,8 +14,46 @@
 #include <pcl/features/cvfh.h>
 #include <pcl/registration/transformation_estimation_svd.h>
 #include <flann/flann.h>
-using namespace std;
-/*
+#include <string.h>
+
+#define SAME 1
+#define NoSAME 0
+
+PositionData PositionALL;
+PositionData Position1;
+PositionData Position2;
+PositionData Position3;
+PositionData Position4;
+PositionData Position5;
+
+int objectNum;
+int FinalPositionIndex[5];
+
+
+void TransferDatatoMain(PositionData *target, int cmd)
+{
+	if(cmd == 1)
+	{
+		*target = Position1;
+	}
+	else if(cmd == 2)
+	{
+		*target = Position2;
+	}
+	else if(cmd == 3)
+	{
+		*target = Position3;
+	}
+	else if(cmd == 4)
+	{
+		*target = Position4;
+	}
+	else
+	{
+		*target = Position5;
+	}
+}
+
 void DisplyXYZPCDbyXYZRGB(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const float *point_color, const float *background_color, int show_mode)
 {
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("OriginalPCD_XYZRGB"));
@@ -49,9 +87,8 @@ void DisplyXYZPCDbyXYZRGB(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, cons
 		//boost::this_thread::sleep (boost::posix_time::microseconds (1000000));
 	}
 }
-*/
 
-/*
+
 void DisplyXYZPCD_ReferencePCDbyXYZRGB(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &reference_cloud, const float *point_color, const float *reference_color, const float *background_color)
 {
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("OriginalPCD_XYZRGB"));
@@ -71,9 +108,7 @@ void DisplyXYZPCD_ReferencePCDbyXYZRGB(pcl::PointCloud<pcl::PointXYZ>::Ptr &inpu
     }
 
 }
-*/
 
-/*
 void DisplyPCDNormalbyXYZRGB(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud,pcl::PointCloud<pcl::Normal>::Ptr &input_normalCloud, const float *point_color, const float *normal_color, const float *background_color)
 {
 	//Where "property" can be only:
@@ -101,7 +136,6 @@ void DisplyPCDNormalbyXYZRGB(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud,pc
 		boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 	}
 }
-*/
 
 
 // if radius = 0.03 ， 0.03 is 3cm
@@ -146,7 +180,7 @@ void SavePCD( pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud, char *pcd_name)
 	cout << "SavePCD : Done!!!" << endl;
 }
 
-/*
+
 void ply_mesh2pcd(char *ply_name, char *pcd_name)
 {
 	cout << "ply_mesh2pcd : Creating polydata!!\n";
@@ -174,9 +208,7 @@ void ply_mesh2pcd(char *ply_name, char *pcd_name)
 	cout << "ply_mesh2pcd : Save pointcloud_data in " << pcd_name << "\n";
 	pcl::io::savePCDFile (pcd_name, *cloud);
 }
-*/
 
-/*
 void stl2pcd(char *stl_name, char *pcd_name)
 {
 	cout << "stl_mesh2pcd : Creating polydata!!\n";
@@ -205,9 +237,8 @@ void stl2pcd(char *stl_name, char *pcd_name)
 	cout << "stl_mesh2pcd : Save pointcloud_data in " << pcd_name << "\n";
 	pcl::io::savePCDFile (pcd_name, *cloud);
 }
-*/
 
-/*
+
 void yml2pcd(char *yml_name, char *pcd_name,  KinectClass kinect_obj, pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, float Segmentation_Range[][2], int auto_type, int show_mode)
 {
 	input_cloud->clear();
@@ -367,7 +398,7 @@ void yml2pcd(char *yml_name, char *pcd_name,  KinectClass kinect_obj, pcl::Point
 	}
 
 }
-*/
+
 
 void voxelGrid_Filter(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, float voxel)
 {
@@ -434,7 +465,6 @@ void selectReferencePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl
 }
 
 
-
 void compute_PPFNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointNormal>::Ptr &output_normalCloud, float neighbor_radius)
 {
 	cout << "ComputeNormals : Create a NormalsEstimation.\n";
@@ -452,8 +482,6 @@ void compute_PPFNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::P
 
 	// output_normalCloud->points.size () should have the same size as the input input_cloud->points.size ()*
 }
-
-
 
 void estiblish_CADModelPointCloud( char *OriginalCADModel_Name, char *SaveCADModel_Name, float radius, float voxelGrid_Value, int is_Boundary, int show_mode)
 {
@@ -498,8 +526,6 @@ void estiblish_CADModelPointCloud( char *OriginalCADModel_Name, char *SaveCADMod
 	}
 }
 
-
-
 void computePPF_TrainingModel(char *CADModel_Name, char *CADModel_HashMapName, float radius)
 {
 	cout << "computePPF_TrainingModel : Loding CADModel Data to PointCloud ...\n";
@@ -531,12 +557,9 @@ void computePPF_TrainingModel(char *CADModel_Name, char *CADModel_HashMapName, f
 }
 
 
-
-vector<pcl::PointCloud<pcl::PointNormal>::Ptr> cloud_models_with_normals;
-vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloud_models;
+vector<pcl::PointCloud<pcl::PointNormal>::Ptr > cloud_models_with_normals;
+vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > cloud_models;
 vector<pcl::PPFHashMapSearch::Ptr> hashmap_search_vector;
-
-
 
 void compute_VotingEstimation_OffinePhase(int CADModel_Number, char **CADModel_FileName, float radius, float HashMapSearch_Position, float HashMapSearch_Rotation)
 {
@@ -580,8 +603,6 @@ void compute_VotingEstimation_OffinePhase(int CADModel_Number, char **CADModel_F
 
 }
 
-
-
 void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, float radius, int show_Mode)
 {
 
@@ -620,15 +641,13 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	cout << "compute_SACSegmentationFromNormals : Done!!!\n";
 }
 
-
-
-void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer,*/ pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet)
+void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet)
 {
 
 	cout << "compute_VotingEstimation_OnlinePhase : Reading the segmentation PointCloud Scene\n";
-	//viewer->removeAllPointClouds();
-  //viewer->addPointCloud (cloud_scene);
-	//viewer->spinOnce (10);
+	viewer->removeAllPointClouds();
+    viewer->addPointCloud (cloud_scene);
+	viewer->spinOnce (10);
 
 
 	cout << "compute_VotingEstimation_OnlinePhase : Computing scene normal.\n";
@@ -667,16 +686,25 @@ void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualizatio
 		pcl::PointCloud<pcl::PointNormal> cloud_output_subsampled;//沒用到
 
 		//做投票跟Cluster
+		cout << "====================================================" << endl;
 		ppf_registration.align (cloud_output_subsampled);
+		cout << "====================================================" << endl;
 
 		//pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_output_subsampled_xyz (new pcl::PointCloud<pcl::PointXYZ> ());//沒用到
-		//for (size_t i = 0; i < cloud_output_subsampled.points.size (); ++i)//沒用到
+		//for ( i = 0; i < cloud_output_subsampled.points.size (); ++i)//沒用到
 		//	cloud_output_subsampled_xyz->points.push_back ( pcl::PointXYZ (cloud_output_subsampled.points[i].x, cloud_output_subsampled.points[i].y, cloud_output_subsampled.points[i].z));//沒用到
 
 		cout << "compute_VotingEstimation_OnlinePhase : Showing model...\n";
-		Eigen::Matrix4f mat_1 = ppf_registration.results.at(0).pose.matrix(); //results.at(0).pose.matrix();
-		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix(); //results.at(1).pose.matrix();
-		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix(); //results.at(2).pose.matrix();
+		Eigen::Matrix4f mat_1 = ppf_registration.results.at(0).pose.matrix();
+		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix();
+		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix();
+
+		cout << "====================================================" << endl;
+		cout << "mat_1 = " << mat_1 << endl;
+		cout << "mat_2 = " << mat_2 << endl;
+		cout << "mat_3 = " << mat_3 << endl;
+		cout << "====================================================" << endl;
+
 		Eigen::Affine3f final_transformation_1 (mat_1);
 		Eigen::Affine3f final_transformation_2 (mat_2);
 		Eigen::Affine3f final_transformation_3 (mat_3);
@@ -751,9 +779,9 @@ void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualizatio
 				if ( Outlier_Score.at(i * 3 + k)  < 0.15 )
 				{
 					ss_ICP << "Model_ " << i << "ICP_Voting_" << k;
-					//viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
-					//viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
-					//viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
+					viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
+					viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
+					viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 0 );
@@ -765,9 +793,9 @@ void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualizatio
 				if ( Outlier_Score.at(i * 3 + k)  < 0.30 ) //0.35
 				{
 					ss_ICP << "Model_ " << i << "ICP_Voting_" << k;
-					//viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
-					//viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
-					//viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
+					viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
+					viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
+					viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 1 );
@@ -779,9 +807,9 @@ void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualizatio
 				if ( Outlier_Score.at(i * 3 + k)  < 0.20 )
 				{
 					ss_ICP << "Model_ " << i << "ICP_Voting_" << k;
-					//viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
-					//viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
-					//viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
+					viewer->addPointCloud (ICP_cloud.at(i * 3 + k), ss_ICP.str ());
+					viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
+					viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[k][0], point_color[k][1], point_color[k][2], ss_ICP.str ());
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 2 );
@@ -794,12 +822,79 @@ void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualizatio
 
 
 	if ( SuccessRecognitionCount != 0 )
+
 	{
 		Eigen::Matrix< float, 4, 1 > Camera_ObjectGraspPoint;
 		int WhichOneBeGrasp;
 		Find_GraspObject( TCP_Position, determine_GraspICP_Cloud, Camera_ObjectGraspPoint, WhichOneBeGrasp);
-		Base2Camera( determine_GraspICP_Cloud.at(WhichOneBeGrasp), TCP_Position, determine_GraspObjectMat.at(WhichOneBeGrasp), BaseObject_EulerAngle, Camera_ObjectGraspPoint.x(), Camera_ObjectGraspPoint.y(), Camera_ObjectGraspPoint.z(), Arm_PickPoint);
-		grasp_objectType = model_type.at(WhichOneBeGrasp);
+
+//here
+		int ii = 0;
+		for( ii = 0; ii < PositionALL.NoneZeroPosition; ii++ )
+		{
+			printf("%d........ : ",ii );
+			Camera_ObjectGraspPoint.x() = PositionALL.CameraPoint[ii].x();
+			Camera_ObjectGraspPoint.y() = PositionALL.CameraPoint[ii].y();
+			Camera_ObjectGraspPoint.z() = PositionALL.CameraPoint[ii].z();
+
+			Base2Camera( determine_GraspICP_Cloud.at(ii), TCP_Position, determine_GraspObjectMat.at(ii), BaseObject_EulerAngle, Camera_ObjectGraspPoint.x(), Camera_ObjectGraspPoint.y(), Camera_ObjectGraspPoint.z(), Arm_PickPoint);
+
+			if(ii == 0)
+			{
+				Position1.Target = model_type.at(PositionALL.IndexOfOriginalPosition[ii]);
+				Position1.Arm_PickPoint = Arm_PickPoint;
+				Position1.BaseObject_EulerAngle[0] = BaseObject_EulerAngle[0];
+				Position1.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
+				Position1.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
+				Position1.NoneZeroPosition = PositionALL.NoneZeroPosition;
+				printf(" done\n",ii );
+			}
+			else if(ii == 1)
+			{
+				Position2.Target = model_type.at(PositionALL.IndexOfOriginalPosition[ii]);
+				Position2.Arm_PickPoint = Arm_PickPoint;
+				Position2.BaseObject_EulerAngle[0] = BaseObject_EulerAngle[0];
+				Position2.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
+				Position2.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
+				Position2.NoneZeroPosition = PositionALL.NoneZeroPosition;
+				printf(" done\n",ii );
+			}
+			else if(ii == 2)
+			{
+				Position3.Target = model_type.at(PositionALL.IndexOfOriginalPosition[ii]);
+				Position3.Arm_PickPoint = Arm_PickPoint;
+				Position3.BaseObject_EulerAngle[0] = BaseObject_EulerAngle[0];
+				Position3.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
+				Position3.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
+				Position3.NoneZeroPosition = PositionALL.NoneZeroPosition;
+				printf(" done\n",ii );
+			}
+			else if(ii == 3)
+			{
+				Position4.Target = model_type.at(PositionALL.IndexOfOriginalPosition[ii]);
+				Position4.Arm_PickPoint = Arm_PickPoint;
+				Position4.BaseObject_EulerAngle[0] = BaseObject_EulerAngle[0];
+				Position4.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
+				Position4.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
+				Position4.NoneZeroPosition = PositionALL.NoneZeroPosition;
+				printf(" done\n",ii );
+			}
+			else
+			{
+				Position5.Target = model_type.at(PositionALL.IndexOfOriginalPosition[ii]);
+				Position5.Arm_PickPoint = Arm_PickPoint;
+				Position5.BaseObject_EulerAngle[0] = BaseObject_EulerAngle[0];
+				Position5.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
+				Position5.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
+				Position5.NoneZeroPosition = PositionALL.NoneZeroPosition;
+				printf(" done\n",ii );
+			}
+		}
+
+
+
+
+		//grasp_objectType = model_type.at(WhichOneBeGrasp);
 		_IsPoseEstimationDonet = true;
 
 		/*stringstream ss_ICP;
@@ -810,13 +905,12 @@ void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualizatio
 	}
 
 
-	//viewer->spinOnce (10);
+	viewer->spinOnce (10);
 	boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
 }
 
 
-/*COMMENT BY TACO
 void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], bool &_IsPoseEstimationDone, int CAD_Type, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognized_CADModel)
 {
 	recognized_CADModel->clear();
@@ -871,11 +965,10 @@ void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl
 		for (size_t i = 0; i < cloud_output_subsampled.points.size (); ++i)
 			cloud_output_subsampled_xyz->points.push_back ( pcl::PointXYZ (cloud_output_subsampled.points[i].x, cloud_output_subsampled.points[i].y, cloud_output_subsampled.points[i].z));*/
 
-/*COMMENT BY TACO
 		cout << "compute_VotingEstimation_OnlinePhase : Showing model...\n";
 		Eigen::Matrix4f mat_1 = ppf_registration.getFinalTransformation();
-		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix(); //results.at(1).pose.matrix();
-		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix(); //results.at(2).pose.matrix();
+		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix();
+		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix();
 		Eigen::Affine3f final_transformation_1 (mat_1);
 		Eigen::Affine3f final_transformation_2 (mat_2);
 		Eigen::Affine3f final_transformation_3 (mat_3);
@@ -987,8 +1080,7 @@ void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl
 	// }
 
 }
-COMMENT BY TACO*/
-/*
+
 void computeIterativeClosestPoint( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &Target_cloud, Eigen::Matrix4f &result_transformation)
 {
 	cout << "computeIterativeClosestPoint : Creating ICP.....\n";
@@ -1017,9 +1109,8 @@ void computeIterativeClosestPoint( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cl
 	result_transformation = ICP_reg->getFinalTransformation ();
 	cout << "computeIterativeClosestPoint :Done!!\n";
 }
-*/
 
-/*
+
 void doExtractCluster_DivideObject( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &DivideObject_ClusterPCDResult, int &DivideObject_ClusterNumber)
 {
 	float background_color[3] = { 0, 0, 0 };
@@ -1062,9 +1153,7 @@ void doExtractCluster_DivideObject( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_c
 	cout << "doExtractCluster_DivideObject : Done!";
 
 }
-*/
 
-/*
 void Base2Camera( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, float TCP_Position[6], Eigen::Matrix4f &Object_PoseMatrix, float Base_Object_EulerAngle[3], float Camera_X, float Camera_Y, float Camera_Z, pcl::PointXYZ &RealWorld_Point )
 {
 	float TCP_X = TCP_Position[0];
@@ -1133,10 +1222,13 @@ void Base2Camera( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, float TCP_Po
 	RealWorld_Point.y = g21 * Camera_X - g22 * Camera_Y + g23 * Camera_Z + g24;
 	RealWorld_Point.z = g31 * Camera_X - g32 * Camera_Y + g33 * Camera_Z + g34;
 
+	cout << "RealWorld_Point = Arm_pickpoint = " << RealWorld_Point << endl;
 
+	//int CompareX = RealWorld_Point.x + 50;
+	//int CompareY = RealWorld_Point.y + 0 ;
+	//double CompareZ = RealWorld_Point.z - 330;
 }
-*/
-/*
+
 void ComputeEulerAngle(Eigen::Matrix4f &PoseMatrix, float EulerAngle[3] )
 {
 	if ( PoseMatrix(2, 0) != 1 && PoseMatrix(2, 0) != -1 )
@@ -1154,8 +1246,7 @@ void ComputeEulerAngle(Eigen::Matrix4f &PoseMatrix, float EulerAngle[3] )
 
 	}
 }
-*/
-/*
+
 void Compute_PercentOfOutlier( pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_model, float &score, float dis_threshold)
 {
 	Eigen::Vector3f tempPoint_model;
@@ -1191,17 +1282,53 @@ void Compute_PercentOfOutlier( pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene,
 
 	score =  temp_score / cloud_model->size();
 }
-*/
 
-/*
+
 void Find_GraspObject( float TCP_Position[6], std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr >  &determine_GraspObjectICPCloud, Eigen::Matrix< float, 4, 1 > &Camera_ObjectGraspPoint, int &determine_GraspObject )
 {
+	cout << "=====================Find_GraspObject===========================\n";
+
 	float TCP_X = TCP_Position[0];
 	float TCP_Y = TCP_Position[1];
 	float TCP_Z = TCP_Position[2];
 	float TCP_A = TCP_Position[3];
 	float TCP_B = TCP_Position[4];
 	float TCP_C = TCP_Position[5];
+
+	Position1.TCP_Position[0] = TCP_Position[0];
+	Position1.TCP_Position[1] = TCP_Position[1];
+	Position1.TCP_Position[2] = TCP_Position[2];
+	Position1.TCP_Position[3] = TCP_Position[3];
+	Position1.TCP_Position[4] = TCP_Position[4];
+	Position1.TCP_Position[5] = TCP_Position[5];
+
+	Position2.TCP_Position[0] = TCP_Position[0];
+	Position2.TCP_Position[1] = TCP_Position[1];
+	Position2.TCP_Position[2] = TCP_Position[2];
+	Position2.TCP_Position[3] = TCP_Position[3];
+	Position2.TCP_Position[4] = TCP_Position[4];
+	Position2.TCP_Position[5] = TCP_Position[5];
+
+	Position3.TCP_Position[0] = TCP_Position[0];
+	Position3.TCP_Position[1] = TCP_Position[1];
+	Position3.TCP_Position[2] = TCP_Position[2];
+	Position3.TCP_Position[3] = TCP_Position[3];
+	Position3.TCP_Position[4] = TCP_Position[4];
+	Position3.TCP_Position[5] = TCP_Position[5];
+
+	Position4.TCP_Position[0] = TCP_Position[0];
+	Position4.TCP_Position[1] = TCP_Position[1];
+	Position4.TCP_Position[2] = TCP_Position[2];
+	Position4.TCP_Position[3] = TCP_Position[3];
+	Position4.TCP_Position[4] = TCP_Position[4];
+	Position4.TCP_Position[5] = TCP_Position[5];
+
+	Position5.TCP_Position[0] = TCP_Position[0];
+	Position5.TCP_Position[1] = TCP_Position[1];
+	Position5.TCP_Position[2] = TCP_Position[2];
+	Position5.TCP_Position[3] = TCP_Position[3];
+	Position5.TCP_Position[4] = TCP_Position[4];
+	Position5.TCP_Position[5] = TCP_Position[5];
 
 	float Tool2TCP_14 = 234.5585;
 	float Tool2TCP_24 = 9.267568;
@@ -1242,11 +1369,32 @@ void Find_GraspObject( float TCP_Position[6], std::vector< pcl::PointCloud<pcl::
 	float Z_maxObject = 0;
 	int temp_one = 0;
 	Eigen::Matrix< float, 4, 1 > Temp_Camera_ObjectGraspPoint;
+	Eigen::Matrix< float, 4, 1 > Temp_Camera_ObjectGrasp[8];
+
+
 	pcl::compute3DCentroid( *( determine_GraspObjectICPCloud.at(0) ), Temp_Camera_ObjectGraspPoint );
 	Z_maxObject = g31 * Temp_Camera_ObjectGraspPoint.x() - g32 * Temp_Camera_ObjectGraspPoint.y() + g33 * Temp_Camera_ObjectGraspPoint.z() + g34;
+
+
+
+	cout << "=======================determine_GraspObjectICPCloud.size() = "<<determine_GraspObjectICPCloud.size()<<"\n";
+
+
+	//keypoint
+
+	objectNum = determine_GraspObjectICPCloud.size(); 	//how many object been recognized
+	//	Eigen::Matrix< float, 4, 1 > *Temp_Camera_ObjectGrasp;
+	//	Temp_Camera_ObjectGrasp = new Eigen::Matrix< float, 4, 1 > [objectNum];//dynamic add element
+
+
 	for (int i = 0; i < determine_GraspObjectICPCloud.size(); i++ )
 	{
-		pcl::compute3DCentroid( *( determine_GraspObjectICPCloud.at(i) ), Temp_Camera_ObjectGraspPoint );
+		pcl::compute3DCentroid( *( determine_GraspObjectICPCloud.at(i) ), Temp_Camera_ObjectGrasp[i] );  // count and record all the object that been detected
+		cout << "Temp_Camera_ObjectGrasp[" << i << "] = " << Temp_Camera_ObjectGrasp[i].x() << "    "  << Temp_Camera_ObjectGrasp[i].y() << "           " << Temp_Camera_ObjectGrasp[i].z() << endl;
+
+
+
+		pcl::compute3DCentroid( *( determine_GraspObjectICPCloud.at(i) ), Temp_Camera_ObjectGraspPoint );	//compare which one is the highest
 		tmepZ_Object = g31 * Temp_Camera_ObjectGraspPoint.x() - g32 * Temp_Camera_ObjectGraspPoint.y() + g33 * Temp_Camera_ObjectGraspPoint.z() + g34;
 		if ( Z_maxObject <= tmepZ_Object )
 		{
@@ -1255,15 +1403,79 @@ void Find_GraspObject( float TCP_Position[6], std::vector< pcl::PointCloud<pcl::
 		}
 	}
 
-	pcl::compute3DCentroid( *( determine_GraspObjectICPCloud.at(temp_one) ), Temp_Camera_ObjectGraspPoint );
-	Camera_ObjectGraspPoint.x() = Temp_Camera_ObjectGraspPoint.x();
-	Camera_ObjectGraspPoint.y() = Temp_Camera_ObjectGraspPoint.y();
-	Camera_ObjectGraspPoint.z() = Temp_Camera_ObjectGraspPoint.z();
+	cout << "==========================================" << endl;
+
+
+
+	float Xdiff;
+	int j = 1;
+
+	Eigen::Matrix< float, 4, 1 > Final_Camera_ObjectGrasp[8];
+	memset(Final_Camera_ObjectGrasp, 0 ,8*sizeof( Eigen::Matrix< float, 4, 1 > ) );
+
+	Final_Camera_ObjectGrasp[0].x() = Temp_Camera_ObjectGrasp[0].x();
+	Final_Camera_ObjectGrasp[0].y() = Temp_Camera_ObjectGrasp[0].y();
+	Final_Camera_ObjectGrasp[0].z() = Temp_Camera_ObjectGrasp[0].z();
+	FinalPositionIndex[0] = 0;
+
+
+
+	for (int i = 1; i < objectNum; i++ )
+	{
+		Xdiff = Temp_Camera_ObjectGrasp[i].x() - Final_Camera_ObjectGrasp[j-1].x();
+
+		if( abs(Xdiff) > 1.1)
+		{
+			Final_Camera_ObjectGrasp[j].x() = Temp_Camera_ObjectGrasp[i].x();
+			Final_Camera_ObjectGrasp[j].y() = Temp_Camera_ObjectGrasp[i].y();
+			Final_Camera_ObjectGrasp[j].z() = Temp_Camera_ObjectGrasp[i].z();
+			FinalPositionIndex[j] = i;
+			j++;
+		}
+	}
+
+	for (int i = 0; i < objectNum; i++ )
+	{
+		cout << "Final_Camera_ObjectGrasp[" << i << "] = " <<  Final_Camera_ObjectGrasp[i].x() << "    "  << Final_Camera_ObjectGrasp[i].y() << "           " << Final_Camera_ObjectGrasp[i].z() << endl;
+
+	}
+
+	cout << "==========================================" << endl;
+
+
+
+	PositionALL.NoneZeroPosition = 0;
+
+	for(int i = 0; i < objectNum; i++ )
+	{
+		if(Final_Camera_ObjectGrasp[i].x() != 0)
+		{
+			PositionALL.CameraPoint[i].x() = Final_Camera_ObjectGrasp[i].x();
+			PositionALL.CameraPoint[i].y() = Final_Camera_ObjectGrasp[i].y();
+			PositionALL.CameraPoint[i].z() = Final_Camera_ObjectGrasp[i].z();
+			PositionALL.IndexOfOriginalPosition[i] = FinalPositionIndex[i];
+			PositionALL.NoneZeroPosition++;
+			cout << "PositionALL.CameraPoint[" << i << "] = " <<  PositionALL.CameraPoint[i].x() << "    "  << PositionALL.CameraPoint[i].y() << "           " << PositionALL.CameraPoint[i].z() << "   ::  " << PositionALL.IndexOfOriginalPosition[i] << endl;
+		}
+	}
+	cout << "PositionALL.NoneZeroPosition = " << PositionALL.NoneZeroPosition << endl;
+
 	determine_GraspObject = temp_one;
 }
-*/
 
-/*
+
+
+
+
+
+
+
+
+
+
+
+
+
 fstream VerifyPrecision_File;
 fstream VerifyPrecision_File_Reference;
 fstream VerifyPrecision_File_Estimation;
@@ -1272,9 +1484,6 @@ float CADModel_ReferencePoint[3] = {0};
 float Scene_ReferencePoint[3] = {0};
 float CADModel_ReferencePoint_2[3] = {0};
 float Scene_ReferencePoint_2[3] = {0};
-*/
-
-/*
 void Verify_Precision( float TCP_Position[6], pcl::PointCloud<pcl::PointXYZ>::Ptr CADModel_PointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr scene_PointCloud)
 {
 	if ( !VerifyPrecision_File.is_open() )
@@ -1305,7 +1514,7 @@ void Verify_Precision( float TCP_Position[6], pcl::PointCloud<pcl::PointXYZ>::Pt
 		/*
 		 *	 Convert image point cloud to real world point cloud
 		 */
-/*COMMENT BY TACO
+
 		float TCP_X = TCP_Position[0];
 		float TCP_Y = TCP_Position[1];
 		float TCP_Z = TCP_Position[2];
@@ -1365,12 +1574,12 @@ void Verify_Precision( float TCP_Position[6], pcl::PointCloud<pcl::PointXYZ>::Pt
 			temp_point.z = g31 * scene_PointCloud->at(i).x - g32 *  scene_PointCloud->at(i).y + g33 *  scene_PointCloud->at(i).z + g34;
 			Scene_RealWorldPointCloud->push_back(temp_point);
 		}
-COMMENT BY TACO*/
+
 
 		/*
 		 *	  Pick Up Real World Reference Point as  Scene_RealWorldReferencePoint and CADModel_RealWorldReferencePoint
 		 */
-/*COMMENT BY TACO
+
 		Eigen::Matrix< float, 4, 1 > CADModel_RealWorldReferencePoint;
 		Eigen::Matrix< float, 4, 1 > Scene_RealWorldReferencePoint;
 		Eigen::Matrix< float, 4, 1 > CADModel_RealWorldReferencePoint_2;
@@ -1414,13 +1623,12 @@ COMMENT BY TACO*/
 		Scene_RealWorldReferencePoint_2(1) = Scene_ReferencePoint_2[1];
 		Scene_RealWorldReferencePoint_2(2) = Scene_ReferencePoint_2[2];
 		Scene_RealWorldReferencePoint_2(3) = 1;
-COMMENT BY TACO*/
+
 		/*
 		 *	  Compute Real World Centroid Point as Scene_RealWorldCentroidPoint and CADModel_RealWorldCentroidPoint
 		 *	  Compute Real World Vector as CADModel_Vector and Scene_Vector
 		 */
 
-/*COMMENT BY TACO
 		Eigen::Matrix< float, 4, 1 > CADModel_RealWorldCentroidPoint;
 		Eigen::Matrix< float, 4, 1 > Scene_RealWorldCentroidPoint;
 		Eigen::Matrix< float, 4, 1 > CADModel_RealWorldCentroidPoint_2;
@@ -1439,11 +1647,11 @@ COMMENT BY TACO*/
 		Scene_Vector(1) = Scene_RealWorldReferencePoint.y() - Scene_RealWorldReferencePoint_2.y();
 		Scene_Vector(2) = Scene_RealWorldReferencePoint.z() - Scene_RealWorldReferencePoint_2.z();
 		Scene_Vector(3) = 1;
-COMMENT BY TACO*/
+
 		/*
 		 *	  Compute translation and rotation error
 		 */
-/*COMMENT BY TACO
+
 		float x_dis, y_dis, z_dis, dis_sqrt, rotation_angle;
 		rotation_angle =  pcl::getAngle3D(Scene_Vector, CADModel_Vector) * 180 / float (M_PI);
 		x_dis = Scene_RealWorldCentroidPoint(0) - CADModel_RealWorldCentroidPoint(0);
@@ -1479,8 +1687,7 @@ COMMENT BY TACO*/
 		}
 	}
 }
-COMMENT BY TACO*/
-/*
+
 void PickPoint_Callback (const pcl::visualization::PointPickingEvent& event, void* viewer_void)
 {
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer = *static_cast<boost::shared_ptr<pcl::visualization::PCLVisualizer> *> (viewer_void);
@@ -1534,4 +1741,4 @@ void PickPoint_Callback (const pcl::visualization::PointPickingEvent& event, voi
 	}
 
 
-}*/
+}

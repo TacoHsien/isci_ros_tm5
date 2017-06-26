@@ -1,5 +1,5 @@
-#define  EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET 
-#include "PCDProcessClass.h"
+#define  EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
+#include <PCDProcessClass.h>
 
 
 PCDProcessClass::PCDProcessClass()
@@ -62,7 +62,7 @@ void PCDProcessClass::showCAD_Boundary(pcl::PointCloud<pcl::PointXYZ>::ConstPtr 
 //void PCDProcessClass::computePairFeature(pcl::PointCloud<PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::Normal>::Ptr &input_normalCloud, float threshold_dist, float threshold_angle)
 //{
 //	pcl::UniformSampling<PointXYZ> uniform_Sampling;
-//	
+//
 //	Eigen::Vector4f p1;
 //	Eigen::Vector4f p1_normal;
 //	Eigen::Vector4f p2;
@@ -93,7 +93,7 @@ void PCDProcessClass::showCAD_Boundary(pcl::PointCloud<pcl::PointXYZ>::ConstPtr 
 //		}
 //
 //	}
-//	
+//
 //	cout << "count_OK = " << count_OK << endl;
 //	pairFeatures = new float*[count_OK];
 //	for ( int i = 0; i < count_OK; ++i)
@@ -139,7 +139,7 @@ void PCDProcessClass::showCAD_Boundary(pcl::PointCloud<pcl::PointXYZ>::ConstPtr 
 //					HashTable_counter[check_SaveInHashTable]++;
 //				}
 //				else
-//				{	
+//				{
 //					HashTable_counter[count_OK] = 0;
 //					HashTable[count_OK][ HashTable_counter[count_OK] ][0] = i;
 //					HashTable[count_OK][ HashTable_counter[count_OK] ][1] = j;
@@ -147,7 +147,7 @@ void PCDProcessClass::showCAD_Boundary(pcl::PointCloud<pcl::PointXYZ>::ConstPtr 
 //					*(*(pairFeatures + count_OK) + 1) = (int)( f2 * (180 / 3.14));
 //					*(*(pairFeatures + count_OK) + 2) = (int)( f3 * (180 / 3.14));
 //					*(*(pairFeatures + count_OK) + 3) = myself_round( f4, 1);
-//					
+//
 //					//cout << "f1 = " << *(*(pairFeatures + count_OK) + 0) << '\t' << "f2 = " << *(*(pairFeatures + count_OK) + 1) << '\t' << "f3 = " << *(*(pairFeatures + count_OK) + 2) << '\t' << "f4 = " << *(*(pairFeatures + count_OK) + 3) << '\n';
 //					HashTable_counter[count_OK]++;
 //					count_OK++;
@@ -167,7 +167,7 @@ void PCDProcessClass::showCAD_Boundary(pcl::PointCloud<pcl::PointXYZ>::ConstPtr 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-//bool computePairFeatures (const Eigen::Vector4f &p1, const Eigen::Vector4f &n1, 
+//bool computePairFeatures (const Eigen::Vector4f &p1, const Eigen::Vector4f &n1,
 //                          const Eigen::Vector4f &p2, const Eigen::Vector4f &n2,
 //                          float &f1, float &f2, float &f3, float &f4)
 //{
@@ -236,7 +236,7 @@ void PCDProcessClass::uniform_DownSample(pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	uni_sampling.compute( sampled_indices );
 	copyPointCloud( *input_cloud, sampled_indices.points, *output_cloud);
 	cout << "Input Size = " << input_cloud->size() << "\nOutput Size = " << output_cloud->size() << endl;
-	
+
 }
 
 void PCDProcessClass::voxelGrid_Filter(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, float voxel)
@@ -275,14 +275,14 @@ void PCDProcessClass::computeBoundary(pcl::PointCloud<PointXYZ>::Ptr &input_clou
 //	{
 //		//if ( myself_round( *(*(float_ptr+i)+0) * (180 / 3.14), 1 ) == myself_round( *(float_compare+0) * (180 / 3.14), 1) &&
 //		//	 myself_round( *(*(float_ptr+i)+1) * (180 / 3.14), 1 ) == myself_round( *(float_compare+1) * (180 / 3.14), 1) &&
-//		//	 myself_round( *(*(float_ptr+i)+2) * (180 / 3.14), 1 ) == myself_round( *(float_compare+2) * (180 / 3.14), 1) && 
+//		//	 myself_round( *(*(float_ptr+i)+2) * (180 / 3.14), 1 ) == myself_round( *(float_compare+2) * (180 / 3.14), 1) &&
 //		//	 myself_round( *(*(float_ptr+i)+3), 1 ) == myself_round( *(float_compare+3), 1) )
 //		//{
 //		//	return i;
 //		//}
 //		if ( (int) (*(*(float_ptr+i)+0) * (180 / 3.14)) == (int)( *(float_compare+0) * (180 / 3.14)) &&
 //			 (int) (*(*(float_ptr+i)+1) * (180 / 3.14)) == (int)( *(float_compare+1) * (180 / 3.14)) &&
-//			 (int) (*(*(float_ptr+i)+2) * (180 / 3.14)) == (int)( *(float_compare+2) * (180 / 3.14)) && 
+//			 (int) (*(*(float_ptr+i)+2) * (180 / 3.14)) == (int)( *(float_compare+2) * (180 / 3.14)) &&
 //			 myself_round( *(*(float_ptr+i)+3), 1 ) == myself_round( *(float_compare+3), 1) )
 //		{
 //			return i;
