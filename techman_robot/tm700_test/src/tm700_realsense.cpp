@@ -51,6 +51,7 @@
 #include <pcl/io/pcd_io.h>
 
 //Bin Picking related Libraries
+//#include <PCL_KinectClass.h>
 #include <CADDatabaseClass.h>
 #include <PCD_Function.h>
 #include <PCDProcessClass.h>
@@ -342,8 +343,6 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 	compute_VotingEstimation_OffinePhase( CADModel_Number, AllCADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
 	while (CaptureImage_Again==1)
 	{
-
-
 		/*
 		 *   catch the image
 		 */
@@ -352,7 +351,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 				//delete [] KinectObj.Scene_ymlName;
 
 				//voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
-        /*voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
+        voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
         pcl::toROSMsg(*scene_downsampling, output_downsampling);
 
 				//compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 1);
