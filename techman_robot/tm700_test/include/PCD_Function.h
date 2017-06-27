@@ -86,7 +86,7 @@ void selectReferencePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl
 void estiblish_CADModelPointCloud( char *OriginalCADModel_Name, char *SaveCADModel_Name, float radius, float voxelGrid_Value, int is_Boundary, int show_mode);
 void computePPF_TrainingModel(char *CADModel_Name, char *CADModel_HashMapName, float radius);
 void compute_PPFNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointNormal>::Ptr &output_normalCloud, float neighbor_radius);
-void compute_VotingEstimation_OffinePhase(int CADModel_Number, char **CADModel_FileName, float radius, float HashMapSearch_Position, float HashMapSearch_Rotation);
+void compute_VotingEstimation_OffinePhase(int CADModel_Number, char const**CADModel_FileName, float radius, float HashMapSearch_Position, float HashMapSearch_Rotation);
 void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3],int &Grasp_ObjectType, bool &_IsPoseEstimationDonet);
 void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, float radius, int show_mode);
 void computeIterativeClosestPoint( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &Target_cloud, Eigen::Matrix4f &result_transformation);

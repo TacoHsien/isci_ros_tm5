@@ -548,7 +548,7 @@ void computePPF_TrainingModel(char *CADModel_Name, char *CADModel_HashMapName, f
 	cout << "computePPF_TrainingModel : cloud_model_ppf->size() : " << cloud_model_ppf->size() << '\n';
 	FILE * writeHashMap;
 	writeHashMap = fopen( CADModel_HashMapName, "w" );
-	fprintf(writeHashMap, "%d\n", cloud_model_ppf->size());//printf(writeHashMap, "%d\n", cloud_model_ppf->size());
+	fprintf(writeHashMap, "%lu\n", cloud_model_ppf->size());//printf(writeHashMap, "%d\n", cloud_model_ppf->size());
 	for (int i = 0; i < cloud_model_ppf->size(); i++)
 	{
 		fprintf( writeHashMap, "%f\t%f\t%f\t%f\t%f\n", cloud_model_ppf->at(i).alpha_m,  cloud_model_ppf->at(i).f1,  cloud_model_ppf->at(i).f2,  cloud_model_ppf->at(i).f3,  cloud_model_ppf->at(i).f4 );
@@ -561,7 +561,7 @@ vector<pcl::PointCloud<pcl::PointNormal>::Ptr > cloud_models_with_normals;
 vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > cloud_models;
 vector<pcl::PPFHashMapSearch::Ptr> hashmap_search_vector;
 
-void compute_VotingEstimation_OffinePhase(int CADModel_Number, char **CADModel_FileName, float radius, float HashMapSearch_Position, float HashMapSearch_Rotation)
+void compute_VotingEstimation_OffinePhase(int CADModel_Number, char const**CADModel_FileName, float radius, float HashMapSearch_Position, float HashMapSearch_Rotation)
 {
 	cout << "compute_VotingEstimation_OffinePhase : Reading CADModel PointCloud...\n";
 	pcl::PCDReader reader;
