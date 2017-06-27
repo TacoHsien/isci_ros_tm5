@@ -1,4 +1,4 @@
-﻿#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
+﻿//#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
 #include <PCD_Function.h>
 #include <pcl/features/principal_curvatures.h>
 #include <pcl/registration/icp.h>
@@ -238,7 +238,7 @@ void stl2pcd(char *stl_name, char *pcd_name)
 	pcl::io::savePCDFile (pcd_name, *cloud);
 }
 
-
+/*
 void yml2pcd(char *yml_name, char *pcd_name,  KinectClass kinect_obj, pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, float Segmentation_Range[][2], int auto_type, int show_mode)
 {
 	input_cloud->clear();
@@ -398,7 +398,7 @@ void yml2pcd(char *yml_name, char *pcd_name,  KinectClass kinect_obj, pcl::Point
 	}
 
 }
-
+*/
 
 void voxelGrid_Filter(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, float voxel)
 {
@@ -548,7 +548,7 @@ void computePPF_TrainingModel(char *CADModel_Name, char *CADModel_HashMapName, f
 	cout << "computePPF_TrainingModel : cloud_model_ppf->size() : " << cloud_model_ppf->size() << '\n';
 	FILE * writeHashMap;
 	writeHashMap = fopen( CADModel_HashMapName, "w" );
-	fprintf( writeHashMap, "%d\n", cloud_model_ppf->size() );
+	fprintf(writeHashMap, "%d\n", cloud_model_ppf->size());//printf(writeHashMap, "%d\n", cloud_model_ppf->size());
 	for (int i = 0; i < cloud_model_ppf->size(); i++)
 	{
 		fprintf( writeHashMap, "%f\t%f\t%f\t%f\t%f\n", cloud_model_ppf->at(i).alpha_m,  cloud_model_ppf->at(i).f1,  cloud_model_ppf->at(i).f2,  cloud_model_ppf->at(i).f3,  cloud_model_ppf->at(i).f4 );
@@ -641,7 +641,7 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	cout << "compute_SACSegmentationFromNormals : Done!!!\n";
 }
 
-void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet)
+void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet)
 {
 
 	cout << "compute_VotingEstimation_OnlinePhase : Reading the segmentation PointCloud Scene\n";
@@ -833,6 +833,7 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 		for( ii = 0; ii < PositionALL.NoneZeroPosition; ii++ )
 		{
 			printf("%d........ : ",ii );
+			//cout<<"ii" << ii << endl;
 			Camera_ObjectGraspPoint.x() = PositionALL.CameraPoint[ii].x();
 			Camera_ObjectGraspPoint.y() = PositionALL.CameraPoint[ii].y();
 			Camera_ObjectGraspPoint.z() = PositionALL.CameraPoint[ii].z();
@@ -847,7 +848,8 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 				Position1.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
 				Position1.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
 				Position1.NoneZeroPosition = PositionALL.NoneZeroPosition;
-				printf(" done\n",ii );
+				//printf(" done\n",ii );
+				printf("ii = %d,  done\n", ii);
 			}
 			else if(ii == 1)
 			{
@@ -857,7 +859,8 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 				Position2.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
 				Position2.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
 				Position2.NoneZeroPosition = PositionALL.NoneZeroPosition;
-				printf(" done\n",ii );
+				//printf(" done\n",ii );
+				printf("ii = %d,  done\n", ii);
 			}
 			else if(ii == 2)
 			{
@@ -867,7 +870,8 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 				Position3.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
 				Position3.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
 				Position3.NoneZeroPosition = PositionALL.NoneZeroPosition;
-				printf(" done\n",ii );
+				//printf(" done\n",ii );
+				printf("ii = %d,  done\n", ii);
 			}
 			else if(ii == 3)
 			{
@@ -877,7 +881,8 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 				Position4.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
 				Position4.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
 				Position4.NoneZeroPosition = PositionALL.NoneZeroPosition;
-				printf(" done\n",ii );
+				//printf(" done\n",ii );
+				printf("ii = %d,  done\n", ii);
 			}
 			else
 			{
@@ -887,7 +892,8 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 				Position5.BaseObject_EulerAngle[1] = BaseObject_EulerAngle[1];
 				Position5.BaseObject_EulerAngle[2] = BaseObject_EulerAngle[2];
 				Position5.NoneZeroPosition = PositionALL.NoneZeroPosition;
-				printf(" done\n",ii );
+				//printf(" done\n",ii );
+				printf("ii = %d,  done\n", ii);
 			}
 		}
 
@@ -911,7 +917,7 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 }
 
 
-void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], bool &_IsPoseEstimationDone, int CAD_Type, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognized_CADModel)
+void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], bool &_IsPoseEstimationDone, int CAD_Type, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognized_CADModel)
 {
 	recognized_CADModel->clear();
 
