@@ -108,8 +108,8 @@ float TCP_PositionData[6] = {0};
 	float ObjectPose_EulerAngle[3];
 	bool _IsPoseEstimationDone = true;
 	std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > DivideObject_ClusterPCDResult;
-	char *AllCADModel_pcdFileName[3] = {"VirtualObject_1_CADModel_PCD.pcd", "VirtualObject_3_CADModel_PCD.pcd", "VirtualObject_6_CADModel_PCD.pcd"};
-	char *CADModel_pcdFileName[1] = {"VirtualObject_1_CADModel_PCD.pcd"};
+	char const*AllCADModel_pcdFileName[3] = {"VirtualObject_1_CADModel_PCD.pcd", "VirtualObject_3_CADModel_PCD.pcd", "VirtualObject_6_CADModel_PCD.pcd"};
+	char const*CADModel_pcdFileName[1] = {"VirtualObject_1_CADModel_PCD.pcd"};
 	int Grasp_ObjectType;
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> RecognitionPCD_Viewer (new pcl::visualization::PCLVisualizer ("RecognitionPCD_Viewer"));
 	float segmentation_Range[3][2] =
