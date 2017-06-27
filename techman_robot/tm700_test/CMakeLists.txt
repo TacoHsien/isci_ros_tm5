@@ -187,6 +187,8 @@ set(HEADER_FILES
     ./include/PCD_Function.h 
     ./include/PCDProcessClass.h 
     ./include/VotingSchemePoseEstimation_Class.h
+#    ./include/KinectClass.h
+#    ./include/PCL_KinectClass.h
 )
 
 ## Declare a C++ library
@@ -199,6 +201,8 @@ add_library(bin_picking #SHARED
    src/PCD_Function.cpp 
    src/PCDProcessClass.cpp 
    src/VotingSchemePoseEstimation.cpp
+#   src/KinectClass.cpp
+#   src/PCL_KinectClass.cpp
    ${HEADER_FILES}
 )
 
@@ -221,6 +225,8 @@ add_library(bin_picking #SHARED
    src/PCD_Function.cpp 
    src/PCDProcessClass.cpp 
    src/VotingSchemePoseEstimation.cpp
+#   src/KinectClass.cpp
+#   src/PCL_KinectClass.cpp
    ${HEADER_FILES}
  )
 ## Add cmake target dependencies of the executable
