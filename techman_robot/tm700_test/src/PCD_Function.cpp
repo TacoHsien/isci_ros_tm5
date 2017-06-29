@@ -28,7 +28,7 @@ PositionData Position5;
 
 int objectNum;
 int FinalPositionIndex[5];
-
+std::string pcd_data_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/pcd/";
 
 void TransferDatatoMain(PositionData *target, int cmd)
 {
@@ -568,7 +568,7 @@ void compute_VotingEstimation_OffinePhase(int CADModel_Number, char const**CADMo
 	for (int i = 0; i < CADModel_Number; i++)
 	{
 		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> () );
-		reader.read( *(CADModel_FileName+i), *cloud);
+		reader.read( pcd_data_path + *(CADModel_FileName+i), *cloud);
 		cloud_models.push_back(cloud);
 		cout << "compute_VotingEstimation_OffinePhase : Model read : " << *(CADModel_FileName+i) << "\n";
 	}
