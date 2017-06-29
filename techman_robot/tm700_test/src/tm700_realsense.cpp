@@ -169,10 +169,13 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(1);
     spinner.start();
 
+/*
     while(ros::ok())
     {
 
     }
+*/
+
 /*
     sleep(1);
 
@@ -343,13 +346,11 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
   sensor_msgs::PointCloud2 output_downsampling;
   sensor_msgs::PointCloud2 output_segmentation;
 
-  pcl::fromROSMsg(*input, *scene);
-
   ROS_INFO("compute_VotingEstimation_OffinePhase Start");
 	compute_VotingEstimation_OffinePhase( CADModel_Number, AllCADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
   ROS_INFO("compute_VotingEstimation_OffinePhase Start");
 
-  while(CaptureImage_Again==1 || ros::ok() )//(ros::ok())
+  while(CaptureImage_Again==1 && ros::ok() )//(ros::ok())
 	{
     ROS_INFO("==========================================");
     ROS_INFO("In while");
@@ -360,6 +361,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 		 //KinectObj.SceneToPCDProcessing();
 		 //yml2pcd( KinectObj.Scene_ymlName, "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, show_Mode);
 		 //delete [] KinectObj.Scene_ymlName;
+    pcl::fromROSMsg(*input, *scene);
 
 		 //voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
     voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
