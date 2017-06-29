@@ -349,7 +349,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 	compute_VotingEstimation_OffinePhase( CADModel_Number, AllCADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
   ROS_INFO("compute_VotingEstimation_OffinePhase Start");
 
-  while(ros::ok()) //(CaptureImage_Again==1)
+  while(CaptureImage_Again==1 || ros::ok() )//(ros::ok())
 	{
     ROS_INFO("==========================================");
     ROS_INFO("In while");
@@ -378,13 +378,13 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 		/*
 		 *   pose estimating
 		 */
-    //ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
+    ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
     //compute_VotingEstimation_OnlinePhase( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
-		//compute_VotingEstimation_OnlinePhase(RecognitionPCD_Viewer, scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
-    //ROS_INFO("compute_VotingEstimation_OnlinePhase Finished");
+		compute_VotingEstimation_OnlinePhase(RecognitionPCD_Viewer, scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
+    ROS_INFO("compute_VotingEstimation_OnlinePhase Finished");
 
-    //cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
-		//cin >> CaptureImage_Again;
+    cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+		cin >> CaptureImage_Again;
 	}
 }
 
