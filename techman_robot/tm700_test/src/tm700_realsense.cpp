@@ -76,15 +76,15 @@ bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
                               unsigned int max_try_times);
 
 
- PositionData  PositionData_Main;
- std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > determine_GraspICP_Cloud;
- std::vector< Eigen::Matrix4f, Eigen::aligned_allocator<Eigen::Matrix4f> > determine_GraspObjectMat;
- Eigen::Matrix< float, 4, 1 > Camera_ObjectGraspPoint;
- int WhichOneBeGrasp = 0;
+PositionData  PositionData_Main;
+std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > determine_GraspICP_Cloud;
+std::vector< Eigen::Matrix4f, Eigen::aligned_allocator<Eigen::Matrix4f> > determine_GraspObjectMat;
+Eigen::Matrix< float, 4, 1 > Camera_ObjectGraspPoint;
+int WhichOneBeGrasp = 0;
 
 /*
-*   Object
-*/
+ *   Object
+ */
 //WgSocket MySocket;
 VotingSchemePoseEstimationClass PoseEstimationObj;
 CADDatabaseClass CADDatabaseObj;
@@ -109,36 +109,34 @@ CADDatabaseClass CADDatabaseObj;
  *   Global Variables
  */
 
-	int show_Mode = 0;
-	int CADModel_Number = 3;
-	float CADModel_Normal_radius = 7.5;
-	float CADModel_Voxel_radius = 5.0;//(1 = 1mm)
-	float Scene_Voxel_radius = 0.01; //6.0;
-	float Scene_Normal_radius = 7.5; //7.5;
-	float SACSegmentationFromNormal_radius = 12; //12;
-	float HashMapSearch_Position = 20.0; // No use
-	float HashMapSearch_Rotation = 15.0;
-	float Clustter_Position = 3.5;
-	float Cluster_Rotation = 30.0;
-	float SamplingRate = 20;
-	int showPose_num = 0;
-	int DivideObject_ClusterNumber = 0;
-	pcl::PointXYZ Arm_PickPoint;
-	float ObjectPose_EulerAngle[3];
-	bool _IsPoseEstimationDone = true;
-	std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > DivideObject_ClusterPCDResult;
-	char const*AllCADModel_pcdFileName[3] = {"VirtualObject_1_CADModel_PCD.pcd", "VirtualObject_3_CADModel_PCD.pcd", "VirtualObject_6_CADModel_PCD.pcd"};
-	char const*CADModel_pcdFileName[1] = {"VirtualObject_1_CADModel_PCD.pcd"};
-	int Grasp_ObjectType;
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> RecognitionPCD_Viewer (new pcl::visualization::PCLVisualizer ("RecognitionPCD_Viewer"));
-	float segmentation_Range[3][2] =
-	{
-		{120, 385},
-		{270, 440},
-		{100, 800}
-	};
-
-
+int show_Mode = 0;
+int CADModel_Number = 3;
+float CADModel_Normal_radius = 7.5;
+float CADModel_Voxel_radius = 5.0;//(1 = 1mm)
+float Scene_Voxel_radius = 0.01; //6.0;
+float Scene_Normal_radius = 7.5; //7.5;
+float SACSegmentationFromNormal_radius = 12; //12;
+float HashMapSearch_Position = 20.0; // No use
+float HashMapSearch_Rotation = 15.0;
+float Clustter_Position = 3.5;
+float Cluster_Rotation = 30.0;
+float SamplingRate = 20;
+int showPose_num = 0;
+int DivideObject_ClusterNumber = 0;
+pcl::PointXYZ Arm_PickPoint;
+float ObjectPose_EulerAngle[3];
+bool _IsPoseEstimationDone = true;
+std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > DivideObject_ClusterPCDResult;
+char const*AllCADModel_pcdFileName[3] = {"VirtualObject_1_CADModel_PCD.pcd", "VirtualObject_3_CADModel_PCD.pcd", "VirtualObject_6_CADModel_PCD.pcd"};
+char const*CADModel_pcdFileName[1] = {"VirtualObject_1_CADModel_PCD.pcd"};
+int Grasp_ObjectType;
+boost::shared_ptr<pcl::visualization::PCLVisualizer> RecognitionPCD_Viewer (new pcl::visualization::PCLVisualizer ("RecognitionPCD_Viewer"));
+float segmentation_Range[3][2] =
+{
+	{120, 385},
+	{270, 440},
+	{100, 800}
+};
 
 ros::Publisher pub;
 //Set data path
@@ -330,7 +328,6 @@ bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
         }
     }
 }
-
 
 void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 {
