@@ -622,7 +622,7 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	seg.setNormalDistanceWeight(2.5);//2.5
 	seg.setMethodType (pcl::SAC_RANSAC);
 	seg.setMaxIterations (1000);
-	seg.setDistanceThreshold (20);//20
+	seg.setDistanceThreshold (0.01);//20
 	seg.setInputCloud( input_cloud );
 	seg.setInputNormals( sceneNormal );
 	seg.segment (*inliers, *coefficients);

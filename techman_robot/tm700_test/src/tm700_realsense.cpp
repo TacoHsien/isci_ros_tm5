@@ -75,6 +75,13 @@ bool try_move_to_joint_target(moveit::planning_interface::MoveGroup& group,
                               const std::vector<double>& joint_target,
                               unsigned int max_try_times);
 
+
+ PositionData  PositionData_Main;
+ std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > determine_GraspICP_Cloud;
+ std::vector< Eigen::Matrix4f, Eigen::aligned_allocator<Eigen::Matrix4f> > determine_GraspObjectMat;
+ Eigen::Matrix< float, 4, 1 > Camera_ObjectGraspPoint;
+ int WhichOneBeGrasp = 0;
+
 /*
 *   Object
 */
@@ -83,8 +90,20 @@ VotingSchemePoseEstimationClass PoseEstimationObj;
 CADDatabaseClass CADDatabaseObj;
 //KinectClass KinectObj;
 
-float Xyzabc_CommandData[6] = {0};
-float TCP_PositionData[6] = {0};
+/*
+ *  ------------ Socket Info -----------------
+ *
+ *  KukaState = 0 -> Wait KUKA arrive image capturing point
+ *	KukaState = 1 -> Image capturing + Pose Estimation
+ *  KukaState = 2 -> Wait KUKA complete components grasping等
+ *  KukaState = -1 -> Close
+ */
+
+ int KukaState = 0;
+ float Xyzabc_CommandData[6] = {0};
+ float TCP_PositionData[6] = {0};
+ int PositionOrder = 1;
+ int cmp;
 
 /*
  *   Global Variables
@@ -95,8 +114,8 @@ float TCP_PositionData[6] = {0};
 	float CADModel_Normal_radius = 7.5;
 	float CADModel_Voxel_radius = 5.0;//(1 = 1mm)
 	float Scene_Voxel_radius = 0.01; //6.0;
-	float Scene_Normal_radius = 2.0; //7.5;
-	float SACSegmentationFromNormal_radius = 0.03; //12;
+	float Scene_Normal_radius = 7.5; //7.5;
+	float SACSegmentationFromNormal_radius = 12; //12;
 	float HashMapSearch_Position = 20.0; // No use
 	float HashMapSearch_Rotation = 15.0;
 	float Clustter_Position = 3.5;
@@ -124,17 +143,14 @@ float TCP_PositionData[6] = {0};
 ros::Publisher pub;
 //Set data path
 //std::string pcd_data_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/pcd/";
-std::string pcd_save_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/src/data/";
+//std::string pcd_save_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/src/data/";
 
 int main(int argc, char **argv)
 {
-
     ros::init(argc, argv, "tm700_realsense");
     ros::NodeHandle node_handle, node_handle_file;
     sensor_msgs::PointCloud2 pcd_data;
     pcl::PointCloud<pcl::PointXYZ> cloud;
-
-    //ros::Publisher pcl_pub = nh.advertise<sensor.msgs::PointCloud2>("pcl_output", 10);
 
     //Create a ROS subscriber for the input point cloud
     ROS_INFO("Subscribe /camera/depth/points");
@@ -143,14 +159,6 @@ int main(int argc, char **argv)
     //Create ROS publishe
     pub = node_handle_file.advertise<sensor_msgs::PointCloud2>("pcl_output", 10);
 
-    //Load PCD file
-    //pcl::io::loadPCDFile(pcd_data_path + "CADObject_0_theta_0_phi_0.pcd", cloud);
-    //pcl::io::savePCDFileASCII("test.pcd", cloud);
-    //pcl::toROSMsg(cloud, pcd_data);
-    //pcd_data.header.frame_id = "point_cloud";
-
-    //Create a ROS publisher for the output point cloud
-    //pub = node_handle.advertise<sensor_msgs::PointCloud2>("output", 10);
 /*
     ros::ServiceClient set_io_client = node_handle.serviceClient<tm_msgs::SetIO>("tm_driver/set_io");
     tm_msgs::SetIO io_srv;
@@ -162,10 +170,10 @@ int main(int argc, char **argv)
     //  - this lets us know when the move is completed
     ros::AsyncSpinner spinner(1);
     spinner.start();
+
     while(ros::ok())
     {
-        //ROS_INFO("Publish pcd_data");
-        //pcl_pub.publish(pcd_data);
+
     }
 /*
     sleep(1);
@@ -344,7 +352,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 	compute_VotingEstimation_OffinePhase( CADModel_Number, AllCADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
   ROS_INFO("compute_VotingEstimation_OffinePhase Start");
 
-  while (CaptureImage_Again==1)
+  while(ros::ok()) //(CaptureImage_Again==1)
 	{
     ROS_INFO("==========================================");
     ROS_INFO("In while");
@@ -373,13 +381,13 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 		/*
 		 *   pose estimating
 		 */
-    ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
+    //ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
     //compute_VotingEstimation_OnlinePhase( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
-		compute_VotingEstimation_OnlinePhase(RecognitionPCD_Viewer, scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
-    ROS_INFO("compute_VotingEstimation_OnlinePhase Finished");
+		//compute_VotingEstimation_OnlinePhase(RecognitionPCD_Viewer, scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
+    //ROS_INFO("compute_VotingEstimation_OnlinePhase Finished");
 
-    cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
-		cin >> CaptureImage_Again;
+    //cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+		//cin >> CaptureImage_Again;
 	}
 }
 
