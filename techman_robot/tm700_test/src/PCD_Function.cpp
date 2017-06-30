@@ -647,7 +647,8 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 	cout << "compute_VotingEstimation_OnlinePhase : Reading the segmentation PointCloud Scene\n";
 	viewer->removeAllPointClouds();
     viewer->addPointCloud (cloud_scene);
-	viewer->spinOnce (10);
+	viewer->spinOnce (10, true);
+
 
 
 	cout << "compute_VotingEstimation_OnlinePhase : Computing scene normal.\n";
@@ -911,7 +912,7 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 	}
 
 
-	viewer->spinOnce (10);
+	viewer->spinOnce (10, true);
 	boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
 }
@@ -1340,9 +1341,16 @@ void Find_GraspObject( float TCP_Position[6], std::vector< pcl::PointCloud<pcl::
 	float Tool2TCP_24 = 9.267568;
 	float Tool2TCP_34 = -41.98946;
 
+/*//KUKA
 	float TCP2Camera_11 = 0.00112373,  TCP2Camera_12 = 0.00555237, TCP2Camera_13 = -0.999984, TCP2Camera_14 = 127.461;
 	float TCP2Camera_21 = 0.999997,  TCP2Camera_22 = 0.00222004, TCP2Camera_23 = 0.00113607, TCP2Camera_24 = -6.08003;
 	float TCP2Camera_31 = 0.00222631,  TCP2Camera_32 = -0.999982, TCP2Camera_33 = -0.00554986, TCP2Camera_34 = 58.0209;
+*/
+
+	//TM5_realsense
+	float TCP2Camera_11 = 0.999989,  TCP2Camera_12 = -0.00470972, TCP2Camera_13 = 0.000503928, TCP2Camera_14 = -3.03507;
+	float TCP2Camera_21 = 0.00471298,  TCP2Camera_22 = 0.999967, TCP2Camera_23 = -0.00666402, TCP2Camera_24 = 124.150;
+	float TCP2Camera_31 = -0.000472525,  TCP2Camera_32 = 0.00666632, TCP2Camera_33 = 0.999978, TCP2Camera_34 = 31.2706;
 
 	float x11 = cos( TCP_A  * D2P ) * cos( TCP_B * D2P );
 	float x12 = cos( TCP_A  * D2P ) * sin( TCP_B * D2P ) * sin( TCP_C * D2P ) - sin( TCP_A * D2P ) * cos( TCP_C * D2P );
@@ -1532,9 +1540,16 @@ void Verify_Precision( float TCP_Position[6], pcl::PointCloud<pcl::PointXYZ>::Pt
 		float Tool2TCP_24 = 9.267568;
 		float Tool2TCP_34 = -41.98946;
 
+/* //KUKA
 		float TCP2Camera_11 = 0.00112373,  TCP2Camera_12 = 0.00555237, TCP2Camera_13 = -0.999984, TCP2Camera_14 = 127.461;
 		float TCP2Camera_21 = 0.999997,  TCP2Camera_22 = 0.00222004, TCP2Camera_23 = 0.00113607, TCP2Camera_24 = -6.08003;
 		float TCP2Camera_31 = 0.00222631,  TCP2Camera_32 = -0.999982, TCP2Camera_33 = -0.00554986, TCP2Camera_34 = 58.0209;
+*/
+		//TM5_realsense
+		float TCP2Camera_11 = 0.999989,  TCP2Camera_12 = -0.00470972, TCP2Camera_13 = 0.000503928, TCP2Camera_14 = -3.03507;
+		float TCP2Camera_21 = 0.00471298,  TCP2Camera_22 = 0.999967, TCP2Camera_23 = -0.00666402, TCP2Camera_24 = 124.150;
+		float TCP2Camera_31 = -0.000472525,  TCP2Camera_32 = 0.00666632, TCP2Camera_33 = 0.999978, TCP2Camera_34 = 31.2706;
+
 
 		float x11 = cos( TCP_A  * D2P ) * cos( TCP_B * D2P );
 		float x12 = cos( TCP_A  * D2P ) * sin( TCP_B * D2P ) * sin( TCP_C * D2P ) - sin( TCP_A * D2P ) * cos( TCP_C * D2P );
