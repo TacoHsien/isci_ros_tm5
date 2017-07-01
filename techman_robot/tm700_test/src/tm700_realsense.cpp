@@ -139,7 +139,7 @@ float segmentation_Range[3][2] =
 };
 
 
-ros::Publisher pub;
+ros::Publisher pub, pub_scene, pub_seg, pub_downsample;
 //Set data path
 //std::string pcd_data_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/pcd/";
 //std::string pcd_save_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/src/data/";
@@ -161,8 +161,10 @@ int main(int argc, char **argv)
 
     ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
 
-    //Create ROS publishe
-    pub = node_handle_file.advertise<sensor_msgs::PointCloud2>("pcl_output", 10);
+    //Create ROS publisher
+    pub_scene = node_handle.advertise<sensor_msgs::PointCloud2>("scene", 10);
+    pub_seg = node_handle.advertise<sensor_msgs::PointCloud2>("scene_seg", 10);
+    pub_downsample = node_handle.advertise<sensor_msgs::PointCloud2>("scene_downsample", 10);
 
 /*
     ros::ServiceClient set_io_client = node_handle.serviceClient<tm_msgs::SetIO>("tm_driver/set_io");
@@ -370,12 +372,16 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 		 //KinectObj.SceneToPCDProcessing();
 		 //yml2pcd( KinectObj.Scene_ymlName, "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, show_Mode);
 		 //delete [] KinectObj.Scene_ymlName;
-
+    ROS_INFO("Publish scene");
+    output = *input;
+    pub_scene.publish(output);
     pcl::fromROSMsg(*input, *scene);
 
 		 //voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
     voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
     pcl::toROSMsg(*scene_downsampling, output_downsampling);
+    ROS_INFO("Publish scene_downsample");
+    pub_downsample.publish(output_downsampling);
 
     ROS_INFO("compute_SACSegmentationFromNormals Start");
 		//compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 1);
@@ -384,7 +390,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 
     pcl::toROSMsg(*scene_segmentation, output_segmentation);
     ROS_INFO("Publish topic");
-    pub.publish(output_segmentation);
+    pub_seg.publish(output_segmentation);
 
 
 		/*
