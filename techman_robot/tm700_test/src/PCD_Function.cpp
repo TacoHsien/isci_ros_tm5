@@ -30,6 +30,13 @@ int objectNum;
 int FinalPositionIndex[5];
 std::string pcd_data_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/pcd/";
 
+/*
+ros::NodeHandle node_handle;
+ros::Publisher pub_ICP;
+sensor_msgs::PointCloud2 output_ICP;
+pub_ICP = node_handle.advertise<sensor_msgs::PointCloud2>("ICP_result", 10);
+*/
+
 void TransferDatatoMain(PositionData *target, int cmd)
 {
 	if(cmd == 1)
@@ -641,7 +648,7 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	cout << "compute_SACSegmentationFromNormals : Done!!!\n";
 }
 
-void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet)
+void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet, pcl::PointCloud<pcl::PointXYZ>::Ptr &estimate_cloud)
 {
 
 	cout << "compute_VotingEstimation_OnlinePhase : Reading the segmentation PointCloud Scene\n";
@@ -786,6 +793,10 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 0 );
+					//pcl::toROSMsg(*ICP_cloud.at(i * 3 + k), output_ICP);
+					//pub_ICP.publish(output_ICP);
+					printf("Output estimate_cloud \n");
+					*estimate_cloud = *ICP_cloud.at(i * 3 + k);
 					SuccessRecognitionCount++;
 				}
 			}
@@ -800,6 +811,10 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 1 );
+					//pcl::toROSMsg(*ICP_cloud.at(i * 3 + k), output_ICP);
+					//pub_ICP.publish(output_ICP);
+					printf("Output estimate_cloud \n");
+					*estimate_cloud = *ICP_cloud.at(i * 3 + k);
 					SuccessRecognitionCount++;
 				}
 			}
@@ -814,13 +829,20 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 					determine_GraspICP_Cloud.push_back( ICP_cloud.at(i * 3 + k) );
 					determine_GraspObjectMat.push_back( ICP_mat[k] );
 					model_type.push_back( 2 );
+					//pcl::toROSMsg(*ICP_cloud.at(i * 3 + k), output_ICP);
+					//pub_ICP.publish(output_ICP);
+					printf("Output estimate_cloud \n");
+					*estimate_cloud = *ICP_cloud.at(i * 3 + k);
 					SuccessRecognitionCount++;
 				}
 			}
 		}
 
 	}
-
+  cout << "====================================================" << endl;
+	//printf("SuccessRecognitionCount = %d\n", SuccessRecognitionCount);
+	cout << "SuccessRecognitionCount = " << SuccessRecognitionCount << endl;
+	cout << "====================================================" << endl;
 
 	if ( SuccessRecognitionCount != 0 )
 
