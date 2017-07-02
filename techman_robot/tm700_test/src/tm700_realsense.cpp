@@ -137,7 +137,7 @@ float segmentation_Range[3][2] =
 	{270, 440},
 	{100, 800}
 };
-
+int CaptureImage_Again = 1;
 
 ros::Publisher pub, pub_scene, pub_seg, pub_downsample, pub_estimation;
 //Set data path
@@ -179,7 +179,7 @@ int main(int argc, char **argv)
     spinner.start();
 
     ros::waitForShutdown();
-    while(ros::ok())
+    while(ros::ok() && CaptureImage_Again == 1)
     {
 
     }
@@ -345,7 +345,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 {
 	float background_color[3] = { 0, 0, 0 };
 	float point_color[3] = { 255, 255, 255 };
-  int CaptureImage_Again = 0;
+  //int CaptureImage_Again = 1;
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr scene (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointXYZ>::Ptr scene_downsampling (new pcl::PointCloud<pcl::PointXYZ>);
@@ -406,13 +406,10 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
     pcl::toROSMsg(*scene_estimation, output_estimation);
     ROS_INFO("Publish topic: scene_estimation");
     pub_seg.publish(output_estimation);
-/*
-    while(CaptureImage_Again == 0)
-    {
-      cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
-      cin >> CaptureImage_Again;
-    }
-*/
+
+    cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+    cin >> CaptureImage_Again;
+
 
 	//}
 }
