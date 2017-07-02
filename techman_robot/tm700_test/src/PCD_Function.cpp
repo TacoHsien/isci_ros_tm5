@@ -706,13 +706,13 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 		Eigen::Matrix4f mat_1 = ppf_registration.results.at(0).pose.matrix();
 		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix();
 		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix();
-
+/*
 		cout << "====================================================" << endl;
 		cout << "mat_1 = " << mat_1 << endl;
 		cout << "mat_2 = " << mat_2 << endl;
 		cout << "mat_3 = " << mat_3 << endl;
 		cout << "====================================================" << endl;
-
+*/
 		Eigen::Affine3f final_transformation_1 (mat_1);
 		Eigen::Affine3f final_transformation_2 (mat_2);
 		Eigen::Affine3f final_transformation_3 (mat_3);
@@ -767,6 +767,13 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 		ss_1 << "Model_ " << i << "_Voting_1";
 		ss_2 << "Model_ " << i << "_Voting_2";
 		ss_3 << "Model_ " << i << "_Voting_3";
+
+		cout << "====================================================" << endl;
+		cout << "i = " << i << endl;
+		cout << "Outlier_Score.at(i * 3 + 0) = "<< Outlier_Score.at(i*3+0) << endl;
+		cout << "Outlier_Score.at(i * 3 + 1) = "<< Outlier_Score.at(i*3+1) << endl;
+		cout << "Outlier_Score.at(i * 3 + 2) = "<< Outlier_Score.at(i*3+2) << endl;
+		cout << "====================================================" << endl;
 
 		/*viewer.addPointCloud (cloud_output_1, ss_1.str ());
 		viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, 0, 255, 0, ss_1.str ());
