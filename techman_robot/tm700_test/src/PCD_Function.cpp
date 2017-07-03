@@ -628,15 +628,15 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	seg.setModelType (pcl::SACMODEL_NORMAL_PLANE);
 	seg.setNormalDistanceWeight(2.5);//2.5
 	seg.setMethodType (pcl::SAC_RANSAC);
-	seg.setMaxIterations (1000);
-	seg.setDistanceThreshold (0.01);//20
+	seg.setMaxIterations (1000); //1000
+	seg.setDistanceThreshold (0.01);//0.01//20
 	seg.setInputCloud( input_cloud );
 	seg.setInputNormals( sceneNormal );
 	seg.segment (*inliers, *coefficients);
 
 	cout << "compute_SACSegmentationFromNormals : Extrace result Segmentation Point Cloud...\n";
 	pcl::ExtractIndices<pcl::PointXYZ> extract;
-	extract.setNegative (true);
+	extract.setNegative (true); //true
 	extract.setInputCloud (input_cloud);
 	extract.setIndices (inliers);
 	extract.filter (*output_cloud);
@@ -648,15 +648,24 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	cout << "compute_SACSegmentationFromNormals : Done!!!\n";
 }
 
-void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet, pcl::PointCloud<pcl::PointXYZ>::Ptr &estimate_cloud)
+void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer,*/ pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene/*Ptr &cloud_scene*/, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet, pcl::PointCloud<pcl::PointXYZ>::Ptr &estimate_cloud)
 {
-
+  boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
 	cout << "compute_VotingEstimation_OnlinePhase : Reading the segmentation PointCloud Scene\n";
+  viewer->setBackgroundColor (0, 0, 0);
 	viewer->removeAllPointClouds();
-    viewer->addPointCloud (cloud_scene);
-	viewer->spinOnce (10, true);
+  viewer->addPointCloud<pcl::PointXYZ>(cloud_scene, "sample cloud");
+	viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
+	//viewer->addCoordinateSystem (1.0);
+	//viewer->initCameraParameters ();
+	viewer->spinOnce (100);
+/*
+  while(ros::ok())
+	{
 
-
+	}
+	return;
+*/
 
 	cout << "compute_VotingEstimation_OnlinePhase : Computing scene normal.\n";
 	pcl::PointCloud< pcl::PointNormal >::Ptr recognize_Scene_normal (new pcl::PointCloud<pcl::PointNormal>);
@@ -941,7 +950,7 @@ void compute_VotingEstimation_OnlinePhase( boost::shared_ptr<pcl::visualization:
 	}
 
 
-	viewer->spinOnce (10, true);
+	viewer->spinOnce (100);
 	boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
 }

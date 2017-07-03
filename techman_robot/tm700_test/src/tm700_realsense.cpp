@@ -111,8 +111,8 @@ CADDatabaseClass CADDatabaseObj;
 
 int show_Mode = 0;
 int CADModel_Number = 3;
-float CADModel_Normal_radius = 7.5; //7.5;
-float CADModel_Voxel_radius = 5.0;//(1 = 1mm)
+float CADModel_Normal_radius = 7.5;//7.5;
+float CADModel_Voxel_radius = 5.0;//5.0;//(1 = 1mm)
 float Scene_Voxel_radius = 0.01; //6.0;
 float Scene_Normal_radius = 7.5; //7.5;
 float SACSegmentationFromNormal_radius = 12; //12;
@@ -130,7 +130,7 @@ std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > DivideObject_ClusterPCDResult
 char const*AllCADModel_pcdFileName[3] = {"VirtualObject_1_CADModel_PCD.pcd", "VirtualObject_3_CADModel_PCD.pcd", "VirtualObject_6_CADModel_PCD.pcd"};
 char const*CADModel_pcdFileName[1] = {"VirtualObject_1_CADModel_PCD.pcd"};
 int Grasp_ObjectType;
-boost::shared_ptr<pcl::visualization::PCLVisualizer> RecognitionPCD_Viewer (new pcl::visualization::PCLVisualizer ("RecognitionPCD_Viewer"));
+//boost::shared_ptr<pcl::visualization::PCLVisualizer> RecognitionPCD_Viewer (new pcl::visualization::PCLVisualizer ("PCD_Viewer")); //RecognitionPCD_Viewer
 float segmentation_Range[3][2] =
 {
 	{120, 385},
@@ -157,15 +157,15 @@ int main(int argc, char **argv)
   	compute_VotingEstimation_OffinePhase( CADModel_Number, AllCADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
     ROS_INFO("compute_VotingEstimation_OffinePhase Finish");
 
-    ROS_INFO("Subscribe /camera/depth/points");
-
-    ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
-
     //Create ROS publisher
     pub_scene = node_handle.advertise<sensor_msgs::PointCloud2>("scene", 10);
     pub_seg = node_handle.advertise<sensor_msgs::PointCloud2>("scene_seg", 10);
     pub_downsample = node_handle.advertise<sensor_msgs::PointCloud2>("scene_downsample", 10);
     pub_estimation = node_handle.advertise<sensor_msgs::PointCloud2>("scene_estiamtion", 10);
+
+    ROS_INFO("Subscribe /camera/depth/points");
+    ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
+
 /*
     ros::ServiceClient set_io_client = node_handle.serviceClient<tm_msgs::SetIO>("tm_driver/set_io");
     tm_msgs::SetIO io_srv;
@@ -177,13 +177,17 @@ int main(int argc, char **argv)
     //  - this lets us know when the move is completed
     ros::AsyncSpinner spinner(1);
     spinner.start();
+    //ros::spin();
 
-    ros::waitForShutdown();
+    //ros::waitForShutdown();
+    cout << " CaptureImage_Again = "<< CaptureImage_Again << endl;
     while(ros::ok() && CaptureImage_Again == 1)
     {
-
+      //cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+      //cin >> CaptureImage_Again;
+      //ros::spinOnce();
     }
-
+    //ros::shutdown();
 
 /*
     sleep(1);
@@ -357,6 +361,14 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
   sensor_msgs::PointCloud2 output_segmentation;
   sensor_msgs::PointCloud2 output_estimation;
 
+
+  cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+  cin >> CaptureImage_Again;
+
+  while(!ros::ok() || CaptureImage_Again == 0)
+  {
+    ros::shutdown();
+  }
   //pcl::fromROSMsg(*input, *scene);
 /*
   ROS_INFO("compute_VotingEstimation_OffinePhase Start");
@@ -400,17 +412,12 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 		 */
     ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
     //compute_VotingEstimation_OnlinePhase( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
-		compute_VotingEstimation_OnlinePhase(RecognitionPCD_Viewer, scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone, scene_estimation);
+		compute_VotingEstimation_OnlinePhase(/*RecognitionPCD_Viewer,*/ scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone, scene_estimation);
     ROS_INFO("compute_VotingEstimation_OnlinePhase Finished");
 
     pcl::toROSMsg(*scene_estimation, output_estimation);
     ROS_INFO("Publish topic: scene_estimation");
     pub_seg.publish(output_estimation);
-
-    cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
-    cin >> CaptureImage_Again;
-
-
 	//}
 }
 
@@ -463,4 +470,6 @@ void Manual_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 
   //compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
   //compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, scene, scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
+
+  return;
 }
