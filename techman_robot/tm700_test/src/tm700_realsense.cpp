@@ -253,7 +253,7 @@ int main(int argc, char **argv)
             try_move_to_named_target(group, my_plan, "ready2", 100);
             break;
         case 2: //move to ready3
-            ROS_INFO("move...to ready3");
+            ROS_INFO("move...tKinectObj.Sceno ready3");
             try_move_to_named_target(group, my_plan, "ready3", 100);
             break;
         case 3: //move to ready4
@@ -361,7 +361,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
   sensor_msgs::PointCloud2 output_segmentation;
   sensor_msgs::PointCloud2 output_estimation;
 
-
+/*
   cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
   cin >> CaptureImage_Again;
 
@@ -369,6 +369,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
   {
     ros::shutdown();
   }
+  */
   //pcl::fromROSMsg(*input, *scene);
 /*
   ROS_INFO("compute_VotingEstimation_OffinePhase Start");
@@ -418,6 +419,10 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
     pcl::toROSMsg(*scene_estimation, output_estimation);
     ROS_INFO("Publish topic: scene_estimation");
     pub_seg.publish(output_estimation);
+
+    cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+    cin >> CaptureImage_Again;
+
 	//}
 }
 
