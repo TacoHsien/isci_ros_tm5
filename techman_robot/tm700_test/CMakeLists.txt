@@ -49,6 +49,10 @@ IF(PCL_FOUND)
   MESSAGE("-- Found PCL version ${PCL_VERSION}: ${PCL_INCLUDE_DIRS}")   
 ENDIF(PCL_FOUND)
 
+#Boost
+find_package(Boost REQUIRED)
+
+
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
@@ -164,6 +168,7 @@ include_directories(#include
   ${catkin_INCLUDE_DIRS}  
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIR}
   ${PROJECT_SOURCE_DIR}/include
 )
 
@@ -242,6 +247,7 @@ add_library(bin_picking #SHARED
    ${catkin_LIBRARIES} 
    ${OpenCV_LIBS}
    ${PCL_LIBRARIES}
+   ${Boost_LIBRARIES}
    bin_picking
    libvtkCommon.so 
    libvtkFiltering.so
