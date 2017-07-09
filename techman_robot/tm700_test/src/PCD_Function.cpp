@@ -165,7 +165,7 @@ void ComputeNormals(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::Point
 
 
 
-void LoadPCD(char *pcd_name, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud)
+void LoadPCD(char const*pcd_name, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud)
 {
 	float background_color[3] = { 0, 0, 0 };
 	float point_color[3] = { 255, 255, 255 };
@@ -180,7 +180,7 @@ void LoadPCD(char *pcd_name, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud)
 
 }
 
-void SavePCD( pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud, char *pcd_name)
+void SavePCD( pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud, char const*pcd_name)
 {
 	cout << "SavePCD : Saving " << pcd_name << " to PointXYZ of pcd type...\n";
 	pcl::io::savePCDFile (pcd_name, *input_cloud);
@@ -629,7 +629,7 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	seg.setNormalDistanceWeight(2.5);//2.5
 	seg.setMethodType (pcl::SAC_RANSAC);
 	seg.setMaxIterations (1000); //1000
-	seg.setDistanceThreshold (0.01);//0.01//20
+	seg.setDistanceThreshold (20);//20
 	seg.setInputCloud( input_cloud );
 	seg.setInputNormals( sceneNormal );
 	seg.segment (*inliers, *coefficients);
@@ -658,7 +658,7 @@ void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization
 	viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
 	//viewer->addCoordinateSystem (1.0);
 	//viewer->initCameraParameters ();
-	viewer->spinOnce (100);
+	viewer->spinOnce (10);
 /*
   while(ros::ok())
 	{
@@ -950,7 +950,7 @@ void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization
 	}
 
 
-	viewer->spinOnce (100);
+	viewer->spinOnce (10);
 	boost::this_thread::sleep (boost::posix_time::microseconds (100000));
 
 }

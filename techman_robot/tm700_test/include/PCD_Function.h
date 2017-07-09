@@ -85,7 +85,7 @@ void ComputeBoundary(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::Poin
 void ply_mesh2pcd(char *ply_name, char *pcd_name);
 void stl2pcd(char *stl_name, char *pcd_name);
 //void yml2pcd(char *yml_name, char *pcd_name,  KinectClass kinect_obj, pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, float Segmentation_Range[][2], int auto_type, int show_mode);
-void LoadPCD(char *pcd_name, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud);
+void LoadPCD(char const*pcd_name, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud);
 void voxelGrid_Filter(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, float voxel);
 void selectReferencePoints(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, std::vector<int> &referencePoint_indices);
 void estiblish_CADModelPointCloud( char *OriginalCADModel_Name, char *SaveCADModel_Name, float radius, float voxelGrid_Value, int is_Boundary, int show_mode);
@@ -95,7 +95,7 @@ void compute_VotingEstimation_OffinePhase(int CADModel_Number, char const**CADMo
 void compute_VotingEstimation_OnlinePhase( /*boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer,*/ pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene/*Ptr &cloud_scene*/, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3],int &Grasp_ObjectType, bool &_IsPoseEstimationDonet, pcl::PointCloud<pcl::PointXYZ>::Ptr &estimate_cloud);
 void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &output_cloud, float radius, int show_mode);
 void computeIterativeClosestPoint( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &Target_cloud, Eigen::Matrix4f &result_transformation);
-void SavePCD( pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud, char *pcd_name);
+void SavePCD( pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud, char const*pcd_name);
 void doExtractCluster_DivideObject( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &DivideObject_ClusterPCDResult, int &DivideObject_ClusterNumber);
 void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > &original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], bool &_IsPoseEstimationDone, int CAD_Type, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognized_CADModel);
 void Base2Camera( pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, float TCP_Position[6], Eigen::Matrix4f &Object_PoseMatrix, float Base_Object_EulerAngle[3], float Camera_X, float Camera_Y, float Camera_Z, pcl::PointXYZ &RealWorld_Point );
