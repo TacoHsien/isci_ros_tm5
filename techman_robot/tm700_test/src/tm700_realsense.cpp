@@ -399,6 +399,9 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
     pcl::fromROSMsg(*input, *scene);
     for (size_t i = 0; i< scene->points.size(); i++)
 		{
+      /*
+       * Convert unit: meter(m) -> millimeter(mm)
+       */
         scene->points[i].x = 1000* scene->points[i].x;
         scene->points[i].y = 1000* scene->points[i].y;
         scene->points[i].z = 1000* scene->points[i].z;
