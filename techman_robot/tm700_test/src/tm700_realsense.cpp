@@ -422,22 +422,21 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
   ROS_INFO("compute_SACSegmentationFromNormals Finished");
 
   scene_seg_rviz->clear();
+  *scene_seg_rviz = *scene_segmentation;
+
   for (size_t i = 0; i< scene_segmentation->points.size(); i++)
 	{
     /*
      * Convert unit: millimeter(mm) -> meter(m)
      */
-      temp_point.x = 0.001* scene_segmentation->points[i].x;
-      temp_point.y = 0.001* scene_segmentation->points[i].y;
-      temp_point.z = 0.001* scene_segmentation->points[i].z;
-      cout << "temp_point.x = " << temp_point.x << endl;
-      cout << "temp_point.y = " << temp_point.y << endl;
-      cout << "temp_point.z = " << temp_point.z << endl;
+      scene_seg_rviz->points[i].x = 0.001* scene_seg_rviz->points[i].x;
+      scene_seg_rviz->points[i].y = 0.001* scene_seg_rviz->points[i].y;
+      scene_seg_rviz->points[i].z = 0.001* scene_seg_rviz->points[i].z;
 
-      scene_seg_rviz->push_back(temp_point);
-      //scene_seg_rviz->points[i].x = scene_segmentation->points[i].x;
-      //scene_seg_rviz->points[i].y = scene_segmentation->points[i].y;
-      //scene_seg_rviz->points[i].z = scene_segmentation->points[i].z;
+      //cout << "temp_point.x = " << temp_point.x << endl;
+      //cout << "temp_point.y = " << temp_point.y << endl;
+      //cout << "temp_point.z = " << temp_point.z << endl;
+      //scene_seg_rviz->push_back(temp_point);
 	}
 
   pcl::toROSMsg(*scene_seg_rviz, output_segmentation);
