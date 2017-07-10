@@ -167,6 +167,7 @@ int main(int argc, char **argv)
 
     ROS_INFO("Subscribe /camera/depth/points");
     ros::Subscriber sub;
+    sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
 //    ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
 
 /*
@@ -180,18 +181,26 @@ int main(int argc, char **argv)
     //  - this lets us know when the move is completed
     //ros::AsyncSpinner spinner(1);
     //spinner.start();
-    //ros::spin();
+    ros::spin();
 
-    //ros::waitForShutdown();
-    cout << " CaptureImage_Again = "<< CaptureImage_Again << endl;
+    /*
     while(CaptureImage_Again == 1)
     {
+      ROS_INFO("In while");
       sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
-      cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
-      cin >> CaptureImage_Again;
-      ros::spinOnce();
+      //cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+      //cin >> CaptureImage_Again;
+      //ros::spinOnce();
     }
-    //ros::shutdown();
+    */
+    ros::waitForShutdown();
+    cout << " CaptureImage_Again = "<< CaptureImage_Again << endl;
+    //spinner.stop();
+    cout << " spinner.stop "<< endl;
+    //sub.shutdown();
+    cout << " sub.shutdown "<< endl;
+    ros::shutdown();
+    cout << " ros::shutdown "<< endl;
 
 /*
     sleep(1);
@@ -356,7 +365,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
   //int CaptureImage_Again = 1;
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr scene (new pcl::PointCloud<pcl::PointXYZ>);
-  pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud (new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr scene_seg_rviz(new pcl::PointCloud<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointXYZ>::Ptr scene_downsampling (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointXYZ>::Ptr scene_segmentation (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointXYZ>::Ptr scene_estimation (new pcl::PointCloud<pcl::PointXYZ>);
@@ -367,99 +376,89 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
   sensor_msgs::PointCloud2 output_estimation;
 
   pcl::PointXYZ temp_point;
-/*
-  cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
-  cin >> CaptureImage_Again;
 
-  while(!ros::ok() || CaptureImage_Again == 0)
-  {
-    ros::shutdown();
-  }
-  */
-  //pcl::fromROSMsg(*input, *scene);
 /*
   ROS_INFO("compute_VotingEstimation_OffinePhase Start");
 	compute_VotingEstimation_OffinePhase( CADModel_Number, AllCADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
   ROS_INFO("compute_VotingEstimation_OffinePhase Start");
 */
-  //while(CaptureImage_Again==1 && ros::ok() )//(ros::ok())
-	//{
-    ROS_INFO("==========================================");
-    ROS_INFO("Ready for Auto_RecognitionFun");
-    ROS_INFO("==========================================");
-		/*
-		 *   catch the image
-		 */
-		 //KinectObj.SceneToPCDProcessing();
-		 //yml2pcd( KinectObj.Scene_ymlName, "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, show_Mode);
-		 //delete [] KinectObj.Scene_ymlName;
-    ROS_INFO("Publish topic: scene");
-    output = *input;
-    //pub_scene.publish(output);
-    pcl::fromROSMsg(*input, *scene);
-    for (size_t i = 0; i< scene->points.size(); i++)
-		{
-      /*
-       * Convert unit: meter(m) -> millimeter(mm)
-       */
-        scene->points[i].x = 1000* scene->points[i].x;
-        scene->points[i].y = 1000* scene->points[i].y;
-        scene->points[i].z = 1000* scene->points[i].z;
-        /*
-				if ( ( scene->points[i].x  >  segmentation_Range[0][0] && scene->points[i].x  <  segmentation_Range[0][1] ) &&
-					 ( scene->points[i].y  >  segmentation_Range[1][0] && scene->points[i].y  <  segmentation_Range[1][1] ) &&
-					 ( scene->points[i].z  >  segmentation_Range[2][0] && scene->points[i].z  <  segmentation_Range[2][1] ) )
-				{
-						temp_point.x = scene->points[i].x;
-						temp_point.y = scene->points[i].y;
-						temp_point.z = scene->points[i].z;
+  ROS_INFO("==========================================");
+  ROS_INFO("Ready for Auto_RecognitionFun");
+  ROS_INFO("==========================================");
+	/*
+	 *   capture the image
+	 */
+	//KinectObj.SceneToPCDProcessing();
+	//yml2pcd( KinectObj.Scene_ymlName, "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, show_Mode);
+	//delete [] KinectObj.Scene_ymlName;
+  ROS_INFO("Publish topic: scene");
+  output = *input;
+  //pub_scene.publish(output);
+  pcl::fromROSMsg(*input, *scene);
 
-						//save_cloud->push_back( temp_point );
-						input_cloud->push_back( temp_point );
-				}
-				else
-				{
-					//Temp_Depth.at<float>(idx) = 0.0;
-				}
-        */
-		}
+  for (size_t i = 0; i< scene->points.size(); i++)
+	{
+    /*
+     * Convert unit: meter(m) -> millimeter(mm)
+     */
+      scene->points[i].x = 1000* scene->points[i].x;
+      scene->points[i].y = 1000* scene->points[i].y;
+      scene->points[i].z = 1000* scene->points[i].z;
+	}
 
-    //SavePCD(scene, pcdFileName_scene[0]);
-    //SavePCD(input_cloud, pcdFileName_scene[0]);
-    pcl::toROSMsg(*scene, output);
-    pub_scene.publish(output);
-		 //voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
-    voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
-    pcl::toROSMsg(*scene_downsampling, output_downsampling);
-    ROS_INFO("Publish topic: scene_downsample");
-    pub_downsample.publish(output_downsampling);
+  //SavePCD(scene, pcdFileName_scene[0]);
+  //SavePCD(input_cloud, pcdFileName_scene[0]);
+  pcl::toROSMsg(*scene, output);
+  pub_scene.publish(output);
+	 //voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
+  voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
+  pcl::toROSMsg(*scene_downsampling, output_downsampling);
+  ROS_INFO("Publish topic: scene_downsample");
+  pub_downsample.publish(output_downsampling);
 
-    ROS_INFO("compute_SACSegmentationFromNormals Start");
-		//compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 1);
-    compute_SACSegmentationFromNormals( scene_downsampling, scene_segmentation, SACSegmentationFromNormal_radius, 1);
-    ROS_INFO("compute_SACSegmentationFromNormals Finished");
+  ROS_INFO("compute_SACSegmentationFromNormals Start");
+	//compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 1);
+  compute_SACSegmentationFromNormals( scene_downsampling, scene_segmentation, SACSegmentationFromNormal_radius, 1);
+  ROS_INFO("compute_SACSegmentationFromNormals Finished");
 
-    pcl::toROSMsg(*scene_segmentation, output_segmentation);
-    ROS_INFO("Publish topic: scene_segmentation");
-    pub_seg.publish(output_segmentation);
+  scene_seg_rviz->clear();
+  for (size_t i = 0; i< scene_segmentation->points.size(); i++)
+	{
+    /*
+     * Convert unit: millimeter(mm) -> meter(m)
+     */
+      temp_point.x = 0.001* scene_segmentation->points[i].x;
+      temp_point.y = 0.001* scene_segmentation->points[i].y;
+      temp_point.z = 0.001* scene_segmentation->points[i].z;
+      cout << "temp_point.x = " << temp_point.x << endl;
+      cout << "temp_point.y = " << temp_point.y << endl;
+      cout << "temp_point.z = " << temp_point.z << endl;
 
+      scene_seg_rviz->push_back(temp_point);
+      //scene_seg_rviz->points[i].x = scene_segmentation->points[i].x;
+      //scene_seg_rviz->points[i].y = scene_segmentation->points[i].y;
+      //scene_seg_rviz->points[i].z = scene_segmentation->points[i].z;
+	}
 
-		/*
-		 *   pose estimating
-		 */
-    ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
-    //compute_VotingEstimation_OnlinePhase( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
-		compute_VotingEstimation_OnlinePhase(/*RecognitionPCD_Viewer,*/ scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone, scene_estimation);
-    ROS_INFO("compute_VotingEstimation_OnlinePhase Finished");
+  pcl::toROSMsg(*scene_seg_rviz, output_segmentation);
+  ROS_INFO("Publish topic: scene_segmentation");
+  pub_seg.publish(output_segmentation);
 
-    pcl::toROSMsg(*scene_estimation, output_estimation);
-    ROS_INFO("Publish topic: scene_estimation");
-    pub_estimation.publish(output_estimation);
+	/*
+	 *   pose estimating
+	 */
+  ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
+  //compute_VotingEstimation_OnlinePhase( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
+	compute_VotingEstimation_OnlinePhase(/*RecognitionPCD_Viewer,*/ scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone, scene_estimation);
+  ROS_INFO("compute_VotingEstimation_OnlinePhase Finished");
 
-    //cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
-    //cin >> CaptureImage_Again;
+  pcl::toROSMsg(*scene_estimation, output_estimation);
+  ROS_INFO("Publish topic: scene_estimation");
+  pub_estimation.publish(output_estimation);
 
-	//}
+  cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+  cin >> CaptureImage_Again;
+
 }
 
 

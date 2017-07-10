@@ -715,13 +715,13 @@ void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization
 		Eigen::Matrix4f mat_1 = ppf_registration.results.at(0).pose.matrix();
 		Eigen::Matrix4f mat_2 = ppf_registration.results.at(1).pose.matrix();
 		Eigen::Matrix4f mat_3 = ppf_registration.results.at(2).pose.matrix();
-/*
+
 		cout << "====================================================" << endl;
-		cout << "mat_1 = " << mat_1 << endl;
-		cout << "mat_2 = " << mat_2 << endl;
-		cout << "mat_3 = " << mat_3 << endl;
+		cout << "mat_1 = " << endl << mat_1 << endl;
+		cout << "mat_2 = " << endl << mat_2 << endl;
+		cout << "mat_3 = " << endl << mat_3 << endl;
 		cout << "====================================================" << endl;
-*/
+
 		Eigen::Affine3f final_transformation_1 (mat_1);
 		Eigen::Affine3f final_transformation_2 (mat_2);
 		Eigen::Affine3f final_transformation_3 (mat_3);
@@ -951,7 +951,7 @@ void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization
 
 
 	viewer->spinOnce (10);
-	boost::this_thread::sleep (boost::posix_time::microseconds (100000));
+	boost::this_thread::sleep (boost::posix_time::microseconds (1000000));
 
 }
 
