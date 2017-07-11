@@ -30,13 +30,6 @@ int objectNum;
 int FinalPositionIndex[5];
 std::string pcd_data_path = "/home/isci/Documents/tm5_ws/src/isci_ros_tm5/techman_robot/tm700_test/pcd/";
 
-/*
-ros::NodeHandle node_handle;
-ros::Publisher pub_ICP;
-sensor_msgs::PointCloud2 output_ICP;
-pub_ICP = node_handle.advertise<sensor_msgs::PointCloud2>("ICP_result", 10);
-*/
-
 void TransferDatatoMain(PositionData *target, int cmd)
 {
 	if(cmd == 1)
