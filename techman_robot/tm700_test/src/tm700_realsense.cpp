@@ -66,6 +66,9 @@ using namespace std;
 void Manual_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input);
 void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input);
 void cloud_cb(const sensor_msgs::PointCloud2Ptr& input);
+void get_current_joint_values(moveit::planning_interface::MoveGroup& group,
+                              moveit::planning_interface::MoveGroup::Plan& plan,
+                              std::vector<double>& record_joint);
 bool try_move_to_named_target(moveit::planning_interface::MoveGroup& group,
                               moveit::planning_interface::MoveGroup::Plan& plan,
                               const std::string& target_name,
@@ -301,6 +304,29 @@ void cloud_cb(const sensor_msgs::PointCloud2Ptr& input)
   //Publish the data.
   ROS_INFO("Publish output");
   pub.publish(output);
+}
+
+void get_current_joint_values(moveit::planning_interface::MoveGroup& group,
+                              moveit::planning_interface::MoveGroup::Plan& plan,
+                              std::vector<double>& record_joint
+                              )
+{
+  /*
+   * Get current joint values of TM5
+   */
+  //if(!ros::ok()) return false;
+  bool success = false;
+
+  std::vector<double> joint_value;
+  joint_value = group.getCurrentJointValues();
+  record_joint = group.getCurrentJointValues();
+
+  ROS_INFO("In get_current_joint_values()");
+  for(int i = 0; i<joint_value.size(); i++)
+  {
+    joint_value[i] = joint_value[i]*180/M_PI;
+    printf("Joint %d: %lf\n",i+1, joint_value[i]);
+  }
 }
 
 bool try_move_to_named_target(moveit::planning_interface::MoveGroup& group,

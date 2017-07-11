@@ -1375,6 +1375,9 @@ void Find_GraspObject( float TCP_Position[6], std::vector< pcl::PointCloud<pcl::
 	Position5.TCP_Position[4] = TCP_Position[4];
 	Position5.TCP_Position[5] = TCP_Position[5];
 
+/*
+ * Gripper to TCP
+ */
 	float Tool2TCP_14 = 234.5585;
 	float Tool2TCP_24 = 9.267568;
 	float Tool2TCP_34 = -41.98946;
