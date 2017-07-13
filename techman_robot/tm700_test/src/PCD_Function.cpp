@@ -693,16 +693,16 @@ void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization
 		ppf_registration.setInputTarget (recognize_Scene_normal);
 
 		cout << "compute_VotingEstimation_OnlinePhase : ppf_registration align....\n";
-		pcl::PointCloud<pcl::PointNormal> cloud_output_subsampled;//沒用到
+		pcl::PointCloud<pcl::PointNormal> cloud_output_subsampled;//No used
 
-		//做投票跟Cluster
+		//Voting and Clustering
 		cout << "====================================================" << endl;
 		ppf_registration.align (cloud_output_subsampled);
 		cout << "====================================================" << endl;
 
-		//pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_output_subsampled_xyz (new pcl::PointCloud<pcl::PointXYZ> ());//沒用到
-		//for ( i = 0; i < cloud_output_subsampled.points.size (); ++i)//沒用到
-		//	cloud_output_subsampled_xyz->points.push_back ( pcl::PointXYZ (cloud_output_subsampled.points[i].x, cloud_output_subsampled.points[i].y, cloud_output_subsampled.points[i].z));//沒用到
+		//pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_output_subsampled_xyz (new pcl::PointCloud<pcl::PointXYZ> ());//No used
+		//for ( i = 0; i < cloud_output_subsampled.points.size (); ++i)//No used
+		//	cloud_output_subsampled_xyz->points.push_back ( pcl::PointXYZ (cloud_output_subsampled.points[i].x, cloud_output_subsampled.points[i].y, cloud_output_subsampled.points[i].z));//No used
 
 		cout << "compute_VotingEstimation_OnlinePhase : Showing model...\n";
 		Eigen::Matrix4f mat_1 = ppf_registration.results.at(0).pose.matrix();

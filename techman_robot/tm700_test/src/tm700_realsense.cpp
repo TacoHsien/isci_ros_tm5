@@ -51,7 +51,6 @@
 #include <pcl/io/pcd_io.h>
 
 //Bin Picking related Libraries
-//#include <PCL_KinectClass.h>
 #include <CADDatabaseClass.h>
 #include <PCD_Function.h>
 #include <PCDProcessClass.h>
