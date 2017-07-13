@@ -153,7 +153,7 @@ int main(int argc, char **argv)
     ros::NodeHandle node_handle, node_handle_file;
     sensor_msgs::PointCloud2 pcd_data;
     pcl::PointCloud<pcl::PointXYZ> cloud;
-  //  TCP_PositionData = {0}
+    //TCP_PositionData = {0}
 
     ROS_INFO("compute_VotingEstimation_OffinePhase Start");
   	compute_VotingEstimation_OffinePhase( CADModel_Number, AllCADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
     ROS_INFO("Subscribe /camera/depth/points");
     ros::Subscriber sub;
     sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
-//    ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
+    //ros::Subscriber sub = node_handle.subscribe("/camera/depth/points", 10, Auto_RecognitionFun);
 
 /*
     ros::ServiceClient set_io_client = node_handle.serviceClient<tm_msgs::SetIO>("tm_driver/set_io");
@@ -490,6 +490,14 @@ void Bin_Picking(const sensor_msgs::PointCloud2Ptr& input)
 
 void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 {
+  /*****************************************************************************************
+   * Steps:
+   * (1) VoxelGrid Filter: voxelGrid_Filter -> Topic: scene_downsample
+   * (2) SAC Segmentation: compute_SACSegmentationFromNormals -> Topic: scene_segmentation
+   * (3) Pose Estimation: compute_VotingEstimation_OnlinePhase -> Topic: scene_estimation
+   *****************************************************************************************
+   */
+
   if(CaptureImage_Again == 1)
   {
     CaptureImage_Again = 0;
@@ -574,7 +582,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
     pub_seg.publish(output_segmentation);
 
 	  /*
-	   *   pose estimating
+	   *   Pose Estimating
 	   */
     ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
     //compute_VotingEstimation_OnlinePhase( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);

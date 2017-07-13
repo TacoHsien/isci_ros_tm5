@@ -1,5 +1,4 @@
-﻿//#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
-#include <PCD_Function.h>
+﻿#include <PCD_Function.h>
 #include <pcl/features/principal_curvatures.h>
 #include <pcl/registration/icp.h>
 #include <pcl/registration/icp_nl.h>
