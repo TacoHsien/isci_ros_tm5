@@ -101,7 +101,7 @@ CADDatabaseClass CADDatabaseObj;
 
  int KukaState = 0;
  float Xyzabc_CommandData[6] = {0};
- float TCP_PositionData[6] = {0};
+ float TCP_PositionData[6] = {244.4473, -114.9051, 386.892, -178.8034, -1.1524, 89.6715};
  int PositionOrder = 1;
  int cmp;
 
@@ -113,7 +113,7 @@ int show_Mode = 0;
 int CADModel_Number = 3;
 float CADModel_Normal_radius = 7.5;//7.5;
 float CADModel_Voxel_radius = 5.0;//5.0;//(1 = 1mm)
-float Scene_Voxel_radius = 6.0; //6.0;
+float Scene_Voxel_radius = 5.0; //6.0;
 float Scene_Normal_radius = 7.5; //7.5;
 float SACSegmentationFromNormal_radius = 12; //12;
 float HashMapSearch_Position = 20.0; // No use
