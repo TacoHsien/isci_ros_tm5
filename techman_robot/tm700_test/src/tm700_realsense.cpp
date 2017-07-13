@@ -586,7 +586,7 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 	   */
     ROS_INFO("compute_VotingEstimation_OnlinePhase Start");
     //compute_VotingEstimation_OnlinePhase( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone);
-	  compute_VotingEstimation_OnlinePhase(/*RecognitionPCD_Viewer,*/ scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone, scene_estimation);
+	  compute_VotingEstimation_OnlinePhase(scene,  scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, ObjectPose_EulerAngle, Grasp_ObjectType, _IsPoseEstimationDone, scene_estimation);
     ROS_INFO("compute_VotingEstimation_OnlinePhase Finished");
 
     pcl::toROSMsg(*scene_estimation, output_estimation);
@@ -601,52 +601,98 @@ void Auto_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 
 void Manual_RecognitionFun(const sensor_msgs::PointCloud2Ptr& input)
 {
-	float background_color[3] = { 0, 0, 0 };
-	float point_color[3] = { 255, 255, 255 };
-	float reference_point_color[3] = { 255, 0, 0 };
-	int CAD_Type = 1;
+  if(CaptureImage_Again == 1)
+  {
+    CaptureImage_Again = 0;
+    float background_color[3] = { 0, 0, 0 };
+  	float point_color[3] = { 255, 255, 255 };
+  	float reference_point_color[3] = { 255, 0, 0 };
+  	int CAD_Type = 1;
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr scene (new pcl::PointCloud<pcl::PointXYZ>);
-  pcl::PointCloud<pcl::PointXYZ>::Ptr scene_downsampling (new pcl::PointCloud<pcl::PointXYZ>);
-  pcl::PointCloud<pcl::PointXYZ>::Ptr scene_segmentation (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr scene (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr scene_seg_rviz(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr scene_downsampling (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr scene_segmentation (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr scene_estimation (new pcl::PointCloud<pcl::PointXYZ>);
 
-  sensor_msgs::PointCloud2 output_downsampling;
-  sensor_msgs::PointCloud2 output_segmentation;
+    sensor_msgs::PointCloud2 output;
+    sensor_msgs::PointCloud2 output_downsampling;
+    sensor_msgs::PointCloud2 output_segmentation;
+    sensor_msgs::PointCloud2 output_estimation;
 
-  pcl::fromROSMsg(*input, *scene);
+    pcl::PointXYZ temp_point;
 
-	/*
-   *   Offline Phase
-   *   Build up the database
-	 */
-	//compute_VotingEstimation_OffinePhase( CADModel_Number, CADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
+  /*
+    ROS_INFO("compute_VotingEstimation_OffinePhase Start");
+	  compute_VotingEstimation_OffinePhase( CADModel_Number, AllCADModel_pcdFileName, CADModel_Normal_radius, HashMapSearch_Position, HashMapSearch_Rotation);
+    ROS_INFO("compute_VotingEstimation_OffinePhase Start");
+  */
+    ROS_INFO("==========================================");
+    ROS_INFO("Ready for Manual_RecognitionFun");
+    ROS_INFO("==========================================");
+	  /*
+	   *   Image capturing
+	   */
+    ROS_INFO("Publish topic: scene");
+    output = *input;
+    //pub_scene.publish(output);
+    pcl::fromROSMsg(*input, *scene);
 
+    for (size_t i = 0; i< scene->points.size(); i++)
+	  {
+      /*
+       * Convert unit: meter(m) -> millimeter(mm)
+       */
+        scene->points[i].x = 1000* scene->points[i].x;
+        scene->points[i].y = 1000* scene->points[i].y;
+        scene->points[i].z = 1000* scene->points[i].z;
+	  }
 
-	/*
-   *   Image Capturing and Recongizing
-	 */
+    //SavePCD(scene, pcdFileName_scene[0]);
+    //SavePCD(input_cloud, pcdFileName_scene[0]);
+    pcl::toROSMsg(*scene, output);
+    pub_scene.publish(output);
+	  //voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
+    voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
+    pcl::toROSMsg(*scene_downsampling, output_downsampling);
+    ROS_INFO("Publish topic: scene_downsample");
+    pub_downsample.publish(output_downsampling);
 
-	//KinectObj.SceneToPCDProcessing();
-	//yml2pcd( "Scene.yml", "Scene.pcd", KinectObj, PoseEstimationObj.getSceneCloud(), segmentation_Range, 1, 1);
-	//delete [] KinectObj.Scene_ymlName;
+    ROS_INFO("compute_SACSegmentationFromNormals Start");
+	  //compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 1);
+    compute_SACSegmentationFromNormals( scene_downsampling, scene_segmentation, SACSegmentationFromNormal_radius, 1);
+    ROS_INFO("compute_SACSegmentationFromNormals Finished");
 
-	//voxelGrid_Filter( PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getDownsampling_SceneCloud(), Scene_Voxel_radius );
-  voxelGrid_Filter(scene, scene_downsampling, Scene_Voxel_radius);
-  //ROS_INFO("voxelGrid_Filter finished");
-  pcl::toROSMsg(*scene_downsampling, output_downsampling);
+    scene_seg_rviz->clear();
+    *scene_seg_rviz = *scene_segmentation;
 
-  //ROS_INFO("Publish topic");
-  //pub.publish(output_downsampling);
+    for (size_t i = 0; i< scene_segmentation->points.size(); i++)
+	  {
+      /*
+       * Convert unit: millimeter(mm) -> meter(m)
+       */
+      scene_seg_rviz->points[i].x = 0.001* scene_seg_rviz->points[i].x;
+      scene_seg_rviz->points[i].y = 0.001* scene_seg_rviz->points[i].y;
+      scene_seg_rviz->points[i].z = 0.001* scene_seg_rviz->points[i].z;
 
-	//compute_SACSegmentationFromNormals( PoseEstimationObj.getDownsampling_SceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), SACSegmentationFromNormal_radius, 0);
-  compute_SACSegmentationFromNormals( scene_downsampling, scene_segmentation, SACSegmentationFromNormal_radius, 0);
-  ROS_INFO("compute_SACSegmentationFromNormals finished");
-  pcl::toROSMsg(*scene_segmentation, output_segmentation);
-  ROS_INFO("Publish topic");
-  pub.publish(output_segmentation);
+      //cout << "temp_point.x = " << temp_point.x << endl;
+      //cout << "temp_point.y = " << temp_point.y << endl;
+      //cout << "temp_point.z = " << temp_point.z << endl;
+      //scene_seg_rviz->push_back(temp_point);
+	  }
 
-  //compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, PoseEstimationObj.getSceneCloud(), PoseEstimationObj.getSceneSegmentationCloud(), CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
-  //compute_VotingEstimation_OnlinePhase_VerifyPrecision( RecognitionPCD_Viewer, scene, scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
+    pcl::toROSMsg(*scene_seg_rviz, output_segmentation);
+    ROS_INFO("Publish topic: scene_segmentation");
+    pub_seg.publish(output_segmentation);
 
-  return;
+	  /*
+	   *   Pose Estimating and Veryify Precision
+	   */
+    ROS_INFO("compute_VotingEstimation_OnlinePhase_VeryfyPrecision Start");
+    compute_VotingEstimation_OnlinePhase_VerifyPrecision(scene, scene_segmentation, CADDatabaseObj.getCADModel_OriginalPCDVector(), CADModel_Number, Scene_Normal_radius , Clustter_Position, Cluster_Rotation, SamplingRate, Arm_PickPoint, TCP_PositionData, _IsPoseEstimationDone, CAD_Type, CADDatabaseObj.getCADModelCloud());
+    ROS_INFO("compute_VotingEstimation_OnlinePhase_VeryfyPrecision Finished");
+
+    cout << " CaptureImage_Again : (1)->Yes, 0->No" << endl;
+    cin >> CaptureImage_Again;
+  }//end of if
 }

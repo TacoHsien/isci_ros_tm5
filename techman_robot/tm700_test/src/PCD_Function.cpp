@@ -640,7 +640,7 @@ void compute_SACSegmentationFromNormals( pcl::PointCloud<pcl::PointXYZ>::Ptr &in
 	cout << "compute_SACSegmentationFromNormals : Done!!!\n";
 }
 
-void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer,*/ pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene/*Ptr &cloud_scene*/, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet, pcl::PointCloud<pcl::PointXYZ>::Ptr &estimate_cloud)
+void compute_VotingEstimation_OnlinePhase(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], float BaseObject_EulerAngle[3], int &grasp_objectType, bool &_IsPoseEstimationDonet, pcl::PointCloud<pcl::PointXYZ>::Ptr &estimate_cloud)
 {
   boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
 	cout << "compute_VotingEstimation_OnlinePhase : Reading the segmentation PointCloud Scene\n";
@@ -927,10 +927,6 @@ void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization
 				printf("ii = %d,  done\n", ii);
 			}
 		}
-
-
-
-
 		//grasp_objectType = model_type.at(WhichOneBeGrasp);
 		_IsPoseEstimationDonet = true;
 
@@ -940,26 +936,24 @@ void compute_VotingEstimation_OnlinePhase(/*boost::shared_ptr<pcl::visualization
 		viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, ss_ICP.str ());
 		viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, point_color[0][0], point_color[0][1], point_color[0][2], ss_ICP.str ());*/
 	}
-
-
 	viewer->spinOnce (10);
 	boost::this_thread::sleep (boost::posix_time::microseconds (1000000));
-
 }
 
 
-void compute_VotingEstimation_OnlinePhase_VerifyPrecision( boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr > original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], bool &_IsPoseEstimationDone, int CAD_Type, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognized_CADModel)
+void compute_VotingEstimation_OnlinePhase_VerifyPrecision(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_scene, pcl::PointCloud<pcl::PointXYZ>::Ptr &recognize_Scene, std::vector< pcl::PointCloud<pcl::PointXYZ>::Ptr> original_ObjectCAD,int CADModel_Number, float radius, float Clustter_Position, float Cluster_Rotation, float SamplingRate, pcl::PointXYZ &Arm_PickPoint, float TCP_Position[6], bool &_IsPoseEstimationDone, int CAD_Type, pcl::PointCloud<pcl::PointXYZ>::Ptr recognized_CADModel)
 {
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
 	recognized_CADModel->clear();
 
 	cout << "compute_VotingEstimation_OnlinePhase : Reading the segmentation PointCloud Scene\n";
 	//pcl::visualization::PCLVisualizer viewer ("PPF Object Recognition - Results");
-    //viewer.setBackgroundColor (0, 0, 0);
+  //viewer.setBackgroundColor (0, 0, 0);
 	viewer->removeAllPointClouds();
-    viewer->addPointCloud (cloud_scene);
+  viewer->addPointCloud (cloud_scene);
 	viewer->spinOnce (10);
-    //viewer.addPointCloud (cloud_scene);
-    //viewer.spinOnce (10);
+  //viewer.addPointCloud (cloud_scene);
+  //viewer.spinOnce (10);
 
 	cout << "compute_VotingEstimation_OnlinePhase : Computing scene normal.\n";
 	pcl::PointCloud< pcl::PointNormal >::Ptr recognize_Scene_normal (new pcl::PointCloud<pcl::PointNormal>);
